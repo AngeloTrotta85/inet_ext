@@ -1,25 +1,19 @@
 #
-# OMNeT++/OMNEST Makefile for inet_ext
+# OMNeT++/OMNEST Makefile for libinet_ext
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -I../../inet/src/inet/linklayer -I../../inet/src -I../../inet/src/inet/linklayer/ieee80211/mac -I../../inet/src/inet/physicallayer/ieee80211/packetlevel -L../../inet/out/$$\(CONFIGNAME\)/src -lINET -KINET_PROJ=../../inet
+#  opp_makemake -f --deep --make-so -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/linklayer -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/linklayer/ieee80211/mac -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/physicallayer/ieee80211/packetlevel -L/home/angelo/Programs/omnetpp-5.0/samples/inet/out/$$\(CONFIGNAME\)/src -lINET -KINET_PROJ=/home/angelo/Programs/omnetpp-5.0/samples/inet
 #
 
 # Name of target to be created (-o option)
-TARGET = inet_ext$(EXE_SUFFIX)
-
-# User interface (uncomment one) (-u option)
-USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(QTENV_LIBS) $(CMDENV_LIBS)
-#USERIF_LIBS = $(CMDENV_LIBS)
-#USERIF_LIBS = $(TKENV_LIBS)
-#USERIF_LIBS = $(QTENV_LIBS)
+TARGET = libinet_ext$(SHARED_LIB_SUFFIX)
 
 # C++ include paths (with -I)
 INCLUDE_PATH = \
-    -I../../inet/src/inet/linklayer \
-    -I../../inet/src \
-    -I../../inet/src/inet/linklayer/ieee80211/mac \
-    -I../../inet/src/inet/physicallayer/ieee80211/packetlevel \
+    -I$(INET_PROJ)/src/inet/linklayer \
+    -I$(INET_PROJ)/src \
+    -I$(INET_PROJ)/src/inet/linklayer/ieee80211/mac \
+    -I$(INET_PROJ)/src/inet/physicallayer/ieee80211/packetlevel \
     -I. \
     -Iinet \
     -Iinet/applications \
@@ -46,8 +40,8 @@ INCLUDE_PATH = \
 EXTRA_OBJS =
 
 # Additional libraries (-L, -l options)
-LIBS = -L../../inet/out/$(CONFIGNAME)/src  -lINET
-LIBS += -Wl,-rpath,`abspath ../../inet/out/$(CONFIGNAME)/src`
+LIBS = -L$(INET_PROJ)/out/$(CONFIGNAME)/src  -lINET
+LIBS += -Wl,-rpath,`abspath $(INET_PROJ)/out/$(CONFIGNAME)/src`
 
 # Output directory
 PROJECT_OUTPUT_DIR = ../out
@@ -75,7 +69,7 @@ MSGFILES = \
 SMFILES =
 
 # Other makefile variables (-K)
-INET_PROJ=../../inet
+INET_PROJ=/home/angelo/Programs/omnetpp-5.0/samples/inet
 
 #------------------------------------------------------------------------------
 
@@ -99,7 +93,7 @@ include $(CONFIGFILE)
 
 # Simulation kernel and user interface libraries
 OMNETPP_LIB_SUBDIR = $(OMNETPP_LIB_DIR)/$(TOOLCHAIN_NAME)
-OMNETPP_LIBS = -L"$(OMNETPP_LIB_SUBDIR)" -L"$(OMNETPP_LIB_DIR)" -loppmain$D $(USERIF_LIBS) $(KERNEL_LIBS) $(SYS_LIBS)
+OMNETPP_LIBS = -L"$(OMNETPP_LIB_SUBDIR)" -L"$(OMNETPP_LIB_DIR)" -loppenvir$D $(KERNEL_LIBS) $(SYS_LIBS)
 
 COPTS = $(CFLAGS)  $(INCLUDE_PATH) -I$(OMNETPP_INCL_DIR)
 MSGCOPTS = $(INCLUDE_PATH)
@@ -127,8 +121,9 @@ all: $O/$(TARGET)
 
 $O/$(TARGET): $(OBJS)  $(wildcard $(EXTRA_OBJS)) Makefile
 	@$(MKPATH) $O
-	@echo Creating executable: $@
-	$(Q)$(CXX) $(LDFLAGS) -o $O/$(TARGET)  $(OBJS) $(EXTRA_OBJS) $(AS_NEEDED_OFF) $(WHOLE_ARCHIVE_ON) $(LIBS) $(WHOLE_ARCHIVE_OFF) $(OMNETPP_LIBS)
+	@echo Creating shared library: $@
+	$(Q)$(SHLIB_LD) -o $O/$(TARGET)  $(OBJS) $(EXTRA_OBJS) $(AS_NEEDED_OFF) $(WHOLE_ARCHIVE_ON) $(LIBS) $(WHOLE_ARCHIVE_OFF) $(OMNETPP_LIBS) $(LDFLAGS)
+	$(Q)$(SHLIB_POSTPROCESS) $O/$(TARGET)
 
 .PHONY: all clean cleanall depend msgheaders smheaders
 
