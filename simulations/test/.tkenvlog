@@ -1,0 +1,480 @@
+---- 20160703-13:23:53 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#652: ptr0x5a29b90 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x5a29b90 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x5abbd70 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x5abbd70 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x5aaa290 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x5aaa290 2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x5aaa290 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x5aaa290 2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x5aaa290 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x5aaa290 2"
+
+
+---- 20160704-14:45:00 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x44d9880 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x44d9880 1"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x44c2fe0 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x44c2fe0 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f4" doesn't match any items
+    while executing
+".network.c raise submodext f4"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x452c630 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x452c630 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f4" doesn't match any items
+    while executing
+".network.c raise submodext f4"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x4417900 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x4417900 1"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x4530ee0 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x4530ee0 2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x4530ee0 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x4530ee0 2"
+
+
+Tcl error: gateinspector.cc#179: unknown or ambiguous item type "circle"
+    while executing
+"$c create circle 0 0 -r 5 -fill $color -stroke $color -tags "dx tooltip msg $msgptr""
+    (procedure "ModuleInspector:drawMessage" line 38)
+    invoked from within
+"ModuleInspector:drawMessage $c $msgptr $xx $yy"
+    (procedure "ModuleInspector:drawMessageOnGate" line 23)
+    invoked from within
+"ModuleInspector:drawMessageOnGate .inspector5.c ptr0xe2b990 ptr0x53db210"
+
+
+Tcl error: gateinspector.cc#179: unknown or ambiguous item type "circle"
+    while executing
+"$c create circle 0 0 -r 5 -fill $color -stroke $color -tags "dx tooltip msg $msgptr""
+    (procedure "ModuleInspector:drawMessage" line 38)
+    invoked from within
+"ModuleInspector:drawMessage $c $msgptr $xx $yy"
+    (procedure "ModuleInspector:drawMessageOnGate" line 23)
+    invoked from within
+"ModuleInspector:drawMessageOnGate .inspector5.c ptr0xe2b990 ptr0x53db210"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f4" doesn't match any items
+    while executing
+".network.c raise submodext f4"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x452c630 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x452c630 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f4" doesn't match any items
+    while executing
+".network.c raise submodext f4"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x4417900 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x4417900 1"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x4530ee0 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x4530ee0 2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x4530ee0 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x4530ee0 2"
+
+
+---- 20160705-10:23:39 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160705-11:10:31 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x3f3d400 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x3f3d400 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x3f3d400 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x3f3d400 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160705-11:16:49 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160705-11:19:40 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160705-11:54:52 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160705-15:53:48 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#652: ptr0x4ff2f70 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x4ff2f70 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x50202c0 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x50202c0 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x50202c0 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x50202c0 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160705-17:53:15 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#652: ptr0x5ad0730 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x5ad0730 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160706-10:38:40 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#652: ptr0x4070a40 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x4070a40 1"
+
+
+Tcl error: moduleinspector.cc#652: ptr0x4070a40 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x4070a40 1"
+
+
+---- 20160708-10:32:04 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#652: ptr0x4f07c70 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x4f07c70 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160712-17:27:50 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#652: ptr0x5af9460 not found
+    while executing
+"error "$tag not found""
+    (procedure "ModuleInspector:getSubmodCoords" line 4)
+    invoked from within
+"ModuleInspector:getSubmodCoords $c $modptr"
+    (procedure "ModuleInspector:drawNextEventMarker" line 2)
+    invoked from within
+"ModuleInspector:drawNextEventMarker .network.c ptr0x5af9460 1"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160713-12:50:27 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160714-14:32:18 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160714-14:44:41 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+
+---- 20160715-12:23:33 ---------------------------------------------------------
+
+
+Tcl error: moduleinspector.cc#232: tagOrId "f2" doesn't match any items
+    while executing
+".network.c raise submodext f2"
+
+

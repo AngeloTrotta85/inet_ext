@@ -1,0 +1,6 @@
+# Partial OMNeT++/Tkenv config file -- see $HOME/.tkenvrc as well
+config default-configname	{Ping2}
+config default-runnumber	{0}
+inspector {Net80211test.host[4].udpApp[0].neighbourood} neighStruct> {} 1 1582x396+-9+17:normal
+inspector {Net80211test.host[0].udpApp[0].neighbourood} neighStruct> {} 1 1595x354+-8+504:normal
+

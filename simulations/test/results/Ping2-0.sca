@@ -1,0 +1,70 @@
+version 2
+run Ping2-0-20160715-14:05:02-4035
+attr configname Ping2
+attr datetime 20160715-14:05:02
+attr experiment Ping2
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvars2 $repetition=0
+attr measurement ""
+attr network Net80211test
+attr processid 4035
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+param **.constraintAreaMaxX 600m
+param **.constraintAreaMaxY 400m
+param **.constraintAreaMaxZ 0m
+param **.constraintAreaMinX 0m
+param **.constraintAreaMinY 0m
+param **.constraintAreaMinZ 0m
+param **.host*.mobility.changeAngleBy "normal(0deg, 30deg)"
+param **.host*.mobility.changeInterval "truncnormal(2s, 0.5s)"
+param **.host*.mobility.initFromDisplayString false
+param **.host*.mobility.speed "truncnormal(20mps, 8mps)"
+param **.host*.mobility.updateInterval 100ms
+param **.host*.mobilityType "\"MassMobility\""
+param **.host[*].networkLayerType "\"IPv4ExtNetworkLayer\""
+param **.host[*].udpType "\"UDPExt\""
+param **.ip.forceBroadcast true
+param **.udpApp[*].delayLimit 3s
+param **.udpApp[*].stopTime 10000s
+param **.udpApp[0].burstDuration 1s
+param **.udpApp[0].chooseDestAddrMode "\"perBurst\""
+param **.udpApp[0].destAddresses "\"255.255.255.255\""
+param **.udpApp[0].destPort 100
+param **.udpApp[0].localPort 100
+param **.udpApp[0].messageLength 1250B
+param **.udpApp[0].sendInterval 0.5s
+param **.udpApp[0].sleepDuration "truncnormal(1s, 0.1s)"
+param **.udpApp[0].startTime "truncnormal(5s, 1s)"
+param **.udpApp[1].burstDuration 100s
+param **.udpApp[1].chooseDestAddrMode "\"perBurst\""
+param **.udpApp[1].destAddresses "moduleListByNedType(\"inet.node.inet.AdhocHost\")"
+param **.udpApp[1].destPort 200
+param **.udpApp[1].localPort 200
+param **.udpApp[1].messageLength 1250B
+param **.udpApp[1].sendInterval 0.5s
+param **.udpApp[1].sleepDuration "truncnormal(10s, 0.1s)"
+param **.udpApp[1].startTime "truncnormal(10s, 1s)"
+param **.wlan[*].bitrate 2Mbps
+param **.wlan[*].mac.address "\"auto\""
+param **.wlan[*].mac.cwMinBroadcast 31
+param **.wlan[*].mac.cwMinData 7
+param **.wlan[*].mac.maxQueueSize 14
+param **.wlan[*].mac.retryLimit 7
+param **.wlan[*].mac.rtsThresholdBytes 3000B
+param **.wlan[*].macType "\"Ieee80211MacExt\""
+param **.wlan[*].mgmt.frameCapacity 10
+param **.wlan[*].mgmtType "\"Ieee80211MgmtAdhocExt\""
+param **.wlan[*].radio.receiver.sensitivity -85dBm
+param **.wlan[*].radio.receiver.snirThreshold 4dB
+param **.wlan[*].radio.receiverType "\"Ieee80211ScalarReceiverExt\""
+param **.wlan[*].radio.transmitter.power 2mW
+param *.host[*].numUdpApps 2
+param *.host[*].udpApp[0].typename "\"UDPStatisticsApp\""
+param *.host[*].udpApp[1].typename "\"UDPBasicBurstExt\""
+
+scalar Net80211test 	hackForCreateResultsFolder 	0

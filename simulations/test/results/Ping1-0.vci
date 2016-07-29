@@ -1,0 +1,178 @@
+file 1251028 1467555652                                         
+version 2
+run Ping1-0-20160703-13:22:34-5459
+attr configname Ping1
+attr datetime 20160703-13:22:34
+attr experiment Ping1
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvars2 $repetition=0
+attr measurement ""
+attr network Net80211test
+attr processid 5459
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+param **.constraintAreaMaxX 600m
+param **.constraintAreaMaxY 400m
+param **.constraintAreaMaxZ 0m
+param **.constraintAreaMinX 0m
+param **.constraintAreaMinY 0m
+param **.constraintAreaMinZ 0m
+param **.host*.mobility.changeAngleBy "normal(0deg, 30deg)"
+param **.host*.mobility.changeInterval "truncnormal(2s, 0.5s)"
+param **.host*.mobility.initFromDisplayString false
+param **.host*.mobility.speed "truncnormal(20mps, 8mps)"
+param **.host*.mobility.updateInterval 100ms
+param **.host*.mobilityType "\"MassMobility\""
+param **.pingApp[*].printPing true
+param **.pingApp[0].startTime uniform(1s,5s)
+param **.pingApp[1].startTime 5s+uniform(1s,5s)
+param **.wlan[*].bitrate 2Mbps
+param **.wlan[*].mac.address "\"auto\""
+param **.wlan[*].mac.cwMinBroadcast 31
+param **.wlan[*].mac.cwMinData 7
+param **.wlan[*].mac.maxQueueSize 14
+param **.wlan[*].mac.retryLimit 7
+param **.wlan[*].mac.rtsThresholdBytes 3000B
+param **.wlan[*].mgmt.frameCapacity 10
+param **.wlan[*].radio.receiver.sensitivity -85dBm
+param **.wlan[*].radio.receiver.snirThreshold 4dB
+param **.wlan[*].radio.transmitter.power 2mW
+param *.host[*].numPingApps 2
+param *.host[*].pingApp[*].destAddr "\"host[0]\""
+param *.host[0].numPingApps 0
+param *.numHosts 2
+
+vector 13  Net80211test.host[0].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 37  Net80211test.host[1].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 9  Net80211test.host[0].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 12  Net80211test.host[0].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 33  Net80211test.host[1].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 36  Net80211test.host[1].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 10  Net80211test.host[0].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+vector 34  Net80211test.host[1].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+vector 17  Net80211test.host[1].pingApp[0]  pingTxSeq:vector  ETV
+attr interpolationmode  none
+attr title  "ping tx seq, vector"
+vector 24  Net80211test.host[1].networkLayer.arp  sentReq:vector  ETV
+attr title  "ARP request sent, vector"
+vector 31  Net80211test.host[1].wlan[0].mac  rcvdPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromUpper
+attr title  "packets received from higher layer, vector(packetBytes)"
+vector 30  Net80211test.host[1].wlan[0].mac  sentDownPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToLower
+attr title  "packets sent to lower layer, vector(packetBytes)"
+vector 35  Net80211test.host[1].wlan[0].radio  transmissionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  transmissionStateChanged
+attr title  "Radio transmission state, vector"
+vector 22  Net80211test.host[1].pingApp[1]  pingTxSeq:vector  ETV
+attr interpolationmode  none
+attr title  "ping tx seq, vector"
+vector 8  Net80211test.host[0].wlan[0].mac  rcvdPkFromLL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromLower
+attr title  "packets received from lower layer, vector(packetBytes)"
+vector 5  Net80211test.host[0].wlan[0].mac  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 1  Net80211test.host[0].networkLayer.arp  sentReply:vector  ETV
+attr title  "ARP replies sent, vector"
+vector 7  Net80211test.host[0].wlan[0].mac  rcvdPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromUpper
+attr title  "packets received from higher layer, vector(packetBytes)"
+vector 6  Net80211test.host[0].wlan[0].mac  sentDownPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToLower
+attr title  "packets sent to lower layer, vector(packetBytes)"
+vector 11  Net80211test.host[0].wlan[0].radio  transmissionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  transmissionStateChanged
+attr title  "Radio transmission state, vector"
+vector 32  Net80211test.host[1].wlan[0].mac  rcvdPkFromLL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromLower
+attr title  "packets received from lower layer, vector(packetBytes)"
+vector 29  Net80211test.host[1].wlan[0].mac  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 18  Net80211test.host[1].pingApp[0]  pingRxSeq:vector  ETV
+attr interpolationmode  none
+attr title  "ping rx seq, vector"
+vector 14  Net80211test.host[1].pingApp[0]  rtt:vector  ETV
+attr interpolationmode  none
+attr title  "ping round-trip time, vector"
+attr unit  s
+vector 15  Net80211test.host[1].pingApp[0]  numLost:vector  ETV
+attr interpolationmode  none
+attr title  "pings lost, vector"
+vector 23  Net80211test.host[1].pingApp[1]  pingRxSeq:vector  ETV
+attr interpolationmode  none
+attr title  "ping rx seq, vector"
+vector 19  Net80211test.host[1].pingApp[1]  rtt:vector  ETV
+attr interpolationmode  none
+attr title  "ping round-trip time, vector"
+attr unit  s
+vector 20  Net80211test.host[1].pingApp[1]  numLost:vector  ETV
+attr interpolationmode  none
+attr title  "pings lost, vector"
+1	6337 51 783 21235 21.195304819246 145.371429231182 2 1 1 2 2
+5	6388 5175 780 31059 21.195304819246 211.37205129378 184 64 120 21968 2628992
+6	11563 10115 788 31077 21.195494819246 211.37245529378 366 14 120 24516 2664664
+7	21678 5175 786 31065 21.195304819246 211.37205129378 184 64 120 21968 2628992
+8	26853 10162 780 31098 21.195304819246 211.373442950526 368 14 120 24544 2665056
+9	37015 19150 0 31082 0 211.37312729378 734 0 3 1832 4762
+10	56165 40433 0 31097 0 211.373442950526 1491 0 3 1872 4102
+11	96598 39732 789 31082 21.195494819246 211.37312729378 1464 0 2 1464 2196
+12	136330 9 0 0 0 0 1 0 0 0 0
+13	136339 90870 0 31098 0 211.373442950526 3352 0 3 5152 13248
+14	227209 3605 848 31028 21.198277248731 211.196983628708 90 0.001708468771 0.182178577905 0.340783661591 0.033473395840806
+15	230814 170 848 29952 21.198277248731 203.197023396811 6 18 119 412 36016
+17	230984 6198 70 32410 3.195254009217 219.195254009217 217 0 216 23436 3382596
+18	237182 2586 848 31028 21.198277248731 211.196983628708 90 18 208 10683 1626573
+19	239768 3686 912 31088 21.373108031611 211.373128122117 92 0.001708048189 1.003920592151 1.170673544973 1.0081915695237
+20	243454 169 912 30012 21.373108031611 203.373087788446 6 13 112 378 31116
+22	243623 6041 273 32311 8.371378465556 218.371378465556 211 0 210 22155 3109085
+23	249664 2651 912 31088 21.373108031611 211.373128122117 92 13 203 10532 1558634
+24	252315 607 72 21218 3.195254009217 145.371378465556 24 1 1 24 24
+29	252922 5363 795 31084 21.195943629237 211.373128122117 184 64 120 21968 2628992
+30	258285 53864 77 32416 3.195254009217 219.195254009217 1847 14 120 200792 23735968
+31	312149 12080 75 32414 3.195254009217 219.195254009217 415 64 120 48456 5728704
+32	324229 10487 795 31084 21.195943629237 211.373128122117 366 14 120 24516 2664664
+33	334716 100718 0 32389 0 218.393966465556 3694 0 3 9232 24002
+34	435434 120587 0 32389 0 218.393966465556 4425 0 3 3311 5507
+35	556021 201400 78 32389 3.195254009217 218.393966465556 7384 0 2 7384 11076
+36	757421 9 0 0 0 0 1 0 0 0 0
+37	757430 493598 0 32415 0 219.195254009217 18100 0 3 30211 78957
