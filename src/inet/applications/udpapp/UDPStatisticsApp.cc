@@ -46,7 +46,10 @@ void UDPStatisticsApp::initialize(int stage)
     }
     else if (stage == INITSTAGE_LAST) {
         myAddr = L3AddressResolver().resolve(this->getParentModule()->getFullPath().c_str());
+        myAppAddr = this->getParentModule()->getIndex();
         EV << "My address is: " << myAddr << std::endl;
+
+        this->getParentModule()->getDisplayString().setTagArg("t", 0, myAddr.str().c_str());
     }
 }
 
@@ -158,22 +161,30 @@ void UDPStatisticsApp::manageReceivedPkt(cPacket *pk, UDPDataIndicationExt *info
 
         neigh_t *n = &neighbourood[pkt->getMyInfo().localAddr];
 
-        n->nodeInf.localAddr = pkt->getMyInfo().localAddr;
+        /*n->nodeInf.localAddr = pkt->getMyInfo().localAddr;
         n->nodeInf.nodeDegree = pkt->getMyInfo().nodeDegree;
         n->nodeInf.meanPowNeighbourood = pkt->getMyInfo().meanPowNeighbourood;
+        n->nodeInf.powNeighbourood = pkt->getMyInfo().powNeighbourood;
         n->nodeInf.meanSnrNeighbourood = pkt->getMyInfo().meanSnrNeighbourood;
+        n->nodeInf.snrNeighbourood = pkt->getMyInfo().snrNeighbourood;
         n->nodeInf.pos = pkt->getMyInfo().pos;
-        n->nodeInf.velocity = pkt->getMyInfo().velocity;
+        n->nodeInf.velocity = pkt->getMyInfo().velocity;*/
+
+        n->nodeInf = pkt->getMyInfo();
         n->simtime = simTime();
         for (unsigned int i = 0; i < pkt->getNeighboursArraySize(); i++) {
             struct nodeinfo newLight;
 
-            newLight.localAddr = pkt->getNeighbours(i).localAddr;
+            /*newLight.localAddr = pkt->getNeighbours(i).localAddr;
             newLight.nodeDegree = pkt->getNeighbours(i).nodeDegree;
             newLight.meanPowNeighbourood = pkt->getNeighbours(i).meanPowNeighbourood;
+            newLight.powNeighbourood = pkt->getNeighbours(i).powNeighbourood;
             newLight.meanSnrNeighbourood= pkt->getNeighbours(i).meanSnrNeighbourood;
+            newLight.snrNeighbourood = pkt->getNeighbours(i).snrNeighbourood;
             newLight.pos= pkt->getNeighbours(i).pos;
-            newLight.velocity= pkt->getNeighbours(i).velocity;
+            newLight.velocity= pkt->getNeighbours(i).velocity;*/
+
+            newLight = pkt->getNeighbours(i);
 
             n->neigh.push_back(newLight);
         }
@@ -224,14 +235,11 @@ cPacket *UDPStatisticsApp::createPacket()
     //payload->setNodeDegree(neighbourood.size());
     //payload->setMeanSnrNeighbourood(calculateNeighMeanSnr());
     //payload->setMeanPowNeighbourood(calculateNeighMeanPow());
-    struct nodeinfo myInfo;
-    myInfo.localAddr = myAddr;
-    myInfo.nodeDegree = neighbourood.size();
-    myInfo.meanSnrNeighbourood = calculateNeighMeanSnr();
-    myInfo.meanPowNeighbourood = calculateNeighMeanPow();
-    myInfo.pos = mob->getCurrentPosition();
-    myInfo.velocity = mob->getCurrentSpeed();
+    struct nodeinfo myInfo, nextInfo;
+    fillMyInfo(myInfo);
     payload->setMyInfo(myInfo);
+    fillNextInfo(nextInfo);
+    payload->setNextInfo(nextInfo);
 
     payload->setNeighboursArraySize(neighbourood.size());
     int ii = 0;
@@ -239,11 +247,14 @@ cPacket *UDPStatisticsApp::createPacket()
         neigh_t *actual = &(it->second);
         struct nodeinfo newInfo;
 
-        newInfo.nodeDegree = actual->nodeInf.nodeDegree;
+        /*newInfo.nodeDegree = actual->nodeInf.nodeDegree;
         newInfo.meanPowNeighbourood = actual->nodeInf.meanPowNeighbourood;
+        newInfo.powNeighbourood = actual->nodeInf.powNeighbourood;
         newInfo.meanSnrNeighbourood = actual->nodeInf.meanSnrNeighbourood;
+        newInfo.snrNeighbourood = actual->nodeInf.snrNeighbourood;
         newInfo.pos = actual->nodeInf.pos;
-        newInfo.velocity = actual->nodeInf.velocity;
+        newInfo.velocity = actual->nodeInf.velocity;*/
+        newInfo = actual->nodeInf;
 
         payload->setNeighbours(ii++, newInfo);
     }
@@ -297,6 +308,47 @@ double UDPStatisticsApp::calculateNeighMeanPow(void) {
     double pow, snr;
     calculateNeighMeanPhy(pow, snr);
     return pow;
+}
+
+void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
+    double count = neighbourood.size();
+
+    Coord sumVel = Coord::ZERO;
+    double sumSnr, sumPow, sumDeg;
+    sumSnr = sumPow = sumDeg = 0.0;
+
+    for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
+        neigh_t *act = &(it->second);
+        sumSnr += act->nodeInf.snrNeighbourood;
+        sumPow += act->nodeInf.powNeighbourood;
+        sumDeg += act->nodeInf.nodeDegree;
+        sumVel += act->nodeInf.velocity;
+    }
+
+    if (count == 0) {
+        count = 1.0;        // trick to write the following code once
+    }
+
+    info.meanNodeDegreeNeighbourood = sumDeg / count;
+    info.meanPowNeighbourood = sumPow / count;
+    info.meanSnrNeighbourood = sumSnr / count;
+    info.meanVelocityNeighbourood = sumVel / count;
+}
+
+void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
+    info.localAddr = myAddr;
+    info.appAddr = myAppAddr;
+    info.nodeDegree = neighbourood.size();
+    info.snrNeighbourood = calculateNeighMeanSnr();
+    info.powNeighbourood = calculateNeighMeanPow();
+    info.pos = mob->getCurrentPosition();
+    info.velocity = mob->getCurrentSpeed();
+
+    calculateAllMeanNeighbourood(info);
+}
+
+void UDPStatisticsApp::fillNextInfo(struct nodeinfo &info) {
+
 }
 
 

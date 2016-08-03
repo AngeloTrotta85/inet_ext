@@ -28,12 +28,19 @@ class noncobject Coord;
 struct nodeinfo
 {
     L3Address localAddr;
+    int appAddr;
+    
     Coord pos;
     Coord velocity;
+    Coord meanVelocityNeighbourood;
         
     int nodeDegree;
+    double meanNodeDegreeNeighbourood;
+    
     double meanSnrNeighbourood;
+    double snrNeighbourood;
 	double meanPowNeighbourood;	
+    double powNeighbourood;
 };
 
 packet ApplicationPacketExt {

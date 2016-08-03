@@ -51,12 +51,13 @@ public:
             //os << "Addr: " << n.addr << " Degree: " << n.degree;// << " NeighList: " << neigh;
 
             os <<
-                    "Addr: " << n.nodeInf.localAddr <<
-                    " Degree: " << n.nodeInf.nodeDegree <<
-                    " MeanSNR: " << n.nodeInf.meanSnrNeighbourood <<
-                    " MeanPow: " << n.nodeInf.meanPowNeighbourood <<
+                    //"Addr: " << n.nodeInf.localAddr <<
+                    "[" << n.nodeInf.appAddr << "]" <<
+                    " Deg: " << n.nodeInf.nodeDegree << " [" << n.nodeInf.meanNodeDegreeNeighbourood << "]" <<
+                    " SNR: " << n.nodeInf.snrNeighbourood << " [" << n.nodeInf.meanSnrNeighbourood << "]" <<
+                    " Pow: " << n.nodeInf.powNeighbourood << " [" << n.nodeInf.meanPowNeighbourood << "]" <<
                     " Pos: " << n.nodeInf.pos <<
-                    " Velocity: " << n.nodeInf.velocity;
+                    " Vel: " << n.nodeInf.velocity << " [" << n.nodeInf.meanVelocityNeighbourood << "]";
 
             return os;
         }
@@ -67,6 +68,7 @@ protected:
 
 private:
   L3Address myAddr;
+  int myAppAddr;
   std::map<L3Address, neigh_t> neighbourood;
 
   //parameters
@@ -95,8 +97,13 @@ protected:
   virtual double calculateNeighMeanSnr(void);
   virtual double calculateNeighMeanPow(void);
 
+  virtual void calculateAllMeanNeighbourood(struct nodeinfo &info);
+
 private:
   void updateForce(void);
+
+  void fillMyInfo(struct nodeinfo &info);
+  void fillNextInfo(struct nodeinfo &info);
 
 public:
   UDPStatisticsApp() {};
