@@ -40,6 +40,7 @@ packet ApplicationPacketExt {
     long sequenceNumber;        
     
     nodeinfo myInfo;
+    nodeinfo nextInfo;
     
     //int nodeDegree;
     //double meanSnrNeighbourood;

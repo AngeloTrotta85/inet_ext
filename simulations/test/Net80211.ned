@@ -30,6 +30,7 @@ network Net80211test
 {
     parameters:
         int numHosts;
+        string routerType @enum("AODVRouter", "DYMORouter", "GPSRRouter") = default("AODVRouter");
     submodules:
         //host[numHosts]: AdhocHost {
         host[numHosts]: AODVRouter {
