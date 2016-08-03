@@ -57,7 +57,12 @@ public:
                     " SNR: " << n.nodeInf.snrNeighbourood << " [" << n.nodeInf.meanSnrNeighbourood << "]" <<
                     " Pow: " << n.nodeInf.powNeighbourood << " [" << n.nodeInf.meanPowNeighbourood << "]" <<
                     " Pos: " << n.nodeInf.pos <<
-                    " Vel: " << n.nodeInf.velocity << " [" << n.nodeInf.meanVelocityNeighbourood << "]";
+                    " Vel: " << n.nodeInf.velocity << " [" << n.nodeInf.meanVelocityNeighbourood << "]" <<
+                    " Dist: " << n.nodeInf.distance << " [" << n.nodeInf.meanDistanceNeighbourood << "]" <<
+                    " NHDist: " << n.nodeInf.nextHopDistance << " [" << n.nodeInf.meanNextHopDistanceNeighbourood << "]" <<
+                    " Appr: " << n.nodeInf.approaching << " [" << n.nodeInf.meanApproachingNeighbourood << "]" <<
+                    " NHAppr: " << n.nodeInf.nextHopApproaching << " [" << n.nodeInf.meanNextHopApproachingNeighbourood << "]" <<
+                    "";
 
             return os;
         }
@@ -98,6 +103,15 @@ protected:
   virtual double calculateNeighMeanPow(void);
 
   virtual void calculateAllMeanNeighbourood(struct nodeinfo &info);
+
+  virtual double getDistanceNextHop(void);
+  virtual IPv4Address getNextHopAddress(void);
+
+  virtual double calcMeanNeighDistance(void);
+  virtual double calcApproachingNeigh(void);
+  virtual double calcNextApproaching(void);
+
+  virtual double calcApproachingVal(Coord posA, Coord velA, Coord posB, Coord velB);
 
 private:
   void updateForce(void);

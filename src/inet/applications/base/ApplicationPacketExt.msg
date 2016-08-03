@@ -33,6 +33,18 @@ struct nodeinfo
     Coord pos;
     Coord velocity;
     Coord meanVelocityNeighbourood;
+    
+    double nextHopDistance;
+    double meanNextHopDistanceNeighbourood;
+    
+    double distance;
+    double meanDistanceNeighbourood;
+    
+    double approaching;
+    double meanApproachingNeighbourood;
+    
+    double nextHopApproaching;
+    double meanNextHopApproachingNeighbourood;
         
     int nodeDegree;
     double meanNodeDegreeNeighbourood;

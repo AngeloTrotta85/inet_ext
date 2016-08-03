@@ -13,6 +13,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
+#include <limits>       // std::numeric_limits
 
 #include <applications/udpapp/UDPStatisticsApp.h>
 #include "inet/networklayer/common/L3AddressResolver.h"
@@ -160,33 +161,11 @@ void UDPStatisticsApp::manageReceivedPkt(cPacket *pk, UDPDataIndicationExt *info
         }
 
         neigh_t *n = &neighbourood[pkt->getMyInfo().localAddr];
-
-        /*n->nodeInf.localAddr = pkt->getMyInfo().localAddr;
-        n->nodeInf.nodeDegree = pkt->getMyInfo().nodeDegree;
-        n->nodeInf.meanPowNeighbourood = pkt->getMyInfo().meanPowNeighbourood;
-        n->nodeInf.powNeighbourood = pkt->getMyInfo().powNeighbourood;
-        n->nodeInf.meanSnrNeighbourood = pkt->getMyInfo().meanSnrNeighbourood;
-        n->nodeInf.snrNeighbourood = pkt->getMyInfo().snrNeighbourood;
-        n->nodeInf.pos = pkt->getMyInfo().pos;
-        n->nodeInf.velocity = pkt->getMyInfo().velocity;*/
-
         n->nodeInf = pkt->getMyInfo();
         n->simtime = simTime();
+
         for (unsigned int i = 0; i < pkt->getNeighboursArraySize(); i++) {
-            struct nodeinfo newLight;
-
-            /*newLight.localAddr = pkt->getNeighbours(i).localAddr;
-            newLight.nodeDegree = pkt->getNeighbours(i).nodeDegree;
-            newLight.meanPowNeighbourood = pkt->getNeighbours(i).meanPowNeighbourood;
-            newLight.powNeighbourood = pkt->getNeighbours(i).powNeighbourood;
-            newLight.meanSnrNeighbourood= pkt->getNeighbours(i).meanSnrNeighbourood;
-            newLight.snrNeighbourood = pkt->getNeighbours(i).snrNeighbourood;
-            newLight.pos= pkt->getNeighbours(i).pos;
-            newLight.velocity= pkt->getNeighbours(i).velocity;*/
-
-            newLight = pkt->getNeighbours(i);
-
-            n->neigh.push_back(newLight);
+            n->neigh.push_back(pkt->getNeighbours(i));
         }
 
         // get physical info
@@ -231,10 +210,6 @@ cPacket *UDPStatisticsApp::createPacket()
     payload->addPar("sourceId") = getId();
     payload->addPar("msgId") = numSent;
 
-    //payload->setLocalAddr(myAddr);
-    //payload->setNodeDegree(neighbourood.size());
-    //payload->setMeanSnrNeighbourood(calculateNeighMeanSnr());
-    //payload->setMeanPowNeighbourood(calculateNeighMeanPow());
     struct nodeinfo myInfo, nextInfo;
     fillMyInfo(myInfo);
     payload->setMyInfo(myInfo);
@@ -245,21 +220,29 @@ cPacket *UDPStatisticsApp::createPacket()
     int ii = 0;
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *actual = &(it->second);
-        struct nodeinfo newInfo;
-
-        /*newInfo.nodeDegree = actual->nodeInf.nodeDegree;
-        newInfo.meanPowNeighbourood = actual->nodeInf.meanPowNeighbourood;
-        newInfo.powNeighbourood = actual->nodeInf.powNeighbourood;
-        newInfo.meanSnrNeighbourood = actual->nodeInf.meanSnrNeighbourood;
-        newInfo.snrNeighbourood = actual->nodeInf.snrNeighbourood;
-        newInfo.pos = actual->nodeInf.pos;
-        newInfo.velocity = actual->nodeInf.velocity;*/
-        newInfo = actual->nodeInf;
-
-        payload->setNeighbours(ii++, newInfo);
+        payload->setNeighbours(ii++, actual->nodeInf);
     }
 
     return payload;
+}
+
+IPv4Address UDPStatisticsApp::getNextHopAddress(void) {
+    IPv4Address nextAdd = IPv4Address::UNSPECIFIED_ADDRESS;
+    //TODO
+    return nextAdd;
+}
+
+double UDPStatisticsApp::getDistanceNextHop(void) {
+    double ris = std::numeric_limits<double>::max();
+    IPv4Address nextAdd = getNextHopAddress();
+
+    if (nextAdd != IPv4Address::UNSPECIFIED_ADDRESS) {
+        if (neighbourood.count(nextAdd) != 0) {
+            ris = neighbourood[nextAdd].nodeInf.pos.distance(mob->getCurrentPosition());
+        }
+    }
+
+    return ris;
 }
 
 double UDPStatisticsApp::getMean(std::list<double> *l) {
@@ -310,12 +293,71 @@ double UDPStatisticsApp::calculateNeighMeanPow(void) {
     return pow;
 }
 
+double UDPStatisticsApp::calcMeanNeighDistance(void) {
+    double count = neighbourood.size();
+    double ris = std::numeric_limits<double>::max();
+    double sumD = 0.0;
+
+    for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
+        neigh_t *act = &(it->second);
+        sumD += act->nodeInf.pos.distance(mob->getCurrentPosition());
+    }
+
+    if (count > 0) {
+        ris = sumD / count;
+    }
+
+    return ris;
+}
+
+double UDPStatisticsApp::calcApproachingVal(Coord posA, Coord velA, Coord posB, Coord velB) {
+    double actDist = posA.distance(posB);
+    Coord nextPosA = posA + velA;
+    Coord nextPosB = posB + velB;
+    double nextDist = nextPosA.distance(nextPosB);
+
+    return (actDist - nextDist);
+}
+
+double UDPStatisticsApp::calcApproachingNeigh(void) {
+    double count = neighbourood.size();
+    double ris = 0.0;
+    double sumA = 0.0;
+
+    for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
+        neigh_t *act = &(it->second);
+        sumA += calcApproachingVal(mob->getCurrentPosition(), mob->getCurrentSpeed(), act->nodeInf.pos, act->nodeInf.velocity);
+    }
+
+    if (count > 0) {
+        ris = sumA / count;
+    }
+
+    return ris;
+
+}
+
+double UDPStatisticsApp::calcNextApproaching(void) {
+    double ris = 0.0;
+    IPv4Address nextAdd = getNextHopAddress();
+
+    if (nextAdd != IPv4Address::UNSPECIFIED_ADDRESS) {
+        if (neighbourood.count(nextAdd) != 0) {
+            struct nodeinfo *act = &(neighbourood[nextAdd].nodeInf);
+            ris = calcApproachingVal(mob->getCurrentPosition(), mob->getCurrentSpeed(), act->pos, act->velocity);
+        }
+    }
+
+    return ris;
+
+}
+
 void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
     double count = neighbourood.size();
 
     Coord sumVel = Coord::ZERO;
-    double sumSnr, sumPow, sumDeg;
-    sumSnr = sumPow = sumDeg = 0.0;
+    double sumSnr, sumPow, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp;
+    sumSnr = sumPow = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = 0.0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *act = &(it->second);
@@ -323,16 +365,32 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         sumPow += act->nodeInf.powNeighbourood;
         sumDeg += act->nodeInf.nodeDegree;
         sumVel += act->nodeInf.velocity;
+        sumNextDist += act->nodeInf.nextHopDistance;
+        sumDist += act->nodeInf.distance;
+        sumApp += act->nodeInf.approaching;
+        sumNextApp += act->nodeInf.nextHopApproaching;
     }
 
     if (count == 0) {
-        count = 1.0;        // trick to write the following code once
+        info.meanNodeDegreeNeighbourood = 0.0;
+        info.meanPowNeighbourood = 0.0;
+        info.meanSnrNeighbourood = 0.0;
+        info.meanVelocityNeighbourood = Coord::ZERO;
+        info.meanNextHopDistanceNeighbourood = 0.0;
+        info.meanDistanceNeighbourood = std::numeric_limits<double>::max();
+        info.meanApproachingNeighbourood = 0.0;
+        info.meanNextHopApproachingNeighbourood = 0.0;
     }
-
-    info.meanNodeDegreeNeighbourood = sumDeg / count;
-    info.meanPowNeighbourood = sumPow / count;
-    info.meanSnrNeighbourood = sumSnr / count;
-    info.meanVelocityNeighbourood = sumVel / count;
+    else {
+        info.meanNodeDegreeNeighbourood = sumDeg / count;
+        info.meanPowNeighbourood = sumPow / count;
+        info.meanSnrNeighbourood = sumSnr / count;
+        info.meanVelocityNeighbourood = sumVel / count;
+        info.meanNextHopDistanceNeighbourood = sumNextDist / count;
+        info.meanDistanceNeighbourood = sumDist / count;
+        info.meanApproachingNeighbourood = sumApp / count;
+        info.meanNextHopApproachingNeighbourood = sumNextApp / count;
+    }
 }
 
 void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
@@ -343,6 +401,10 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
     info.powNeighbourood = calculateNeighMeanPow();
     info.pos = mob->getCurrentPosition();
     info.velocity = mob->getCurrentSpeed();
+    info.nextHopDistance = getDistanceNextHop();
+    info.distance = calcMeanNeighDistance();
+    info.approaching = calcApproachingNeigh();
+    info.nextHopApproaching = calcNextApproaching();
 
     calculateAllMeanNeighbourood(info);
 }
