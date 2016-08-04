@@ -63,7 +63,11 @@ public:
                     " Appr: " << n.nodeInf.approaching << " [" << n.nodeInf.meanApproachingNeighbourood << "]" <<
                     " NHAppr: " << n.nodeInf.nextHopApproaching << " [" << n.nodeInf.meanNextHopApproachingNeighbourood << "]" <<
                     " VelT: " << n.nodeInf.velTheta << " [" << n.nodeInf.meanVelThetaNeighbourood << "]" <<
+                    " VelTm: " << n.nodeInf.velThetaMean << " [" << n.nodeInf.meanVelThetaMeanNeighbourood << "]" <<
+                    " VelTv: " << n.nodeInf.velThetaVariance << " [" << n.nodeInf.meanVelThetaVarianceNeighbourood << "]" <<
                     " VelL: " << n.nodeInf.velLength << " [" << n.nodeInf.meanVelLengthNeighbourood << "]" <<
+                    " VelLm: " << n.nodeInf.velLengthMean << " [" << n.nodeInf.meanVelLengthMeanNeighbourood << "]" <<
+                    " VelLv: " << n.nodeInf.velLengthVariance << " [" << n.nodeInf.meanVelLengthVarianceNeighbourood << "]" <<
                     "";
 
             return os;
@@ -104,7 +108,8 @@ protected:
 
   virtual void manageReceivedPkt(cPacket *pk, UDPDataIndicationExt *info);
 
-  virtual double getMean(std::list<double> *l);
+  virtual double getWeightedMean(std::list<double> *l);
+  virtual void getVarianceMean(std::list<double> *l, double &mean, double &variance);
   virtual void calculateNeighMeanPhy(double &pow, double &snr);
   virtual double calculateNeighMeanSnr(void);
   virtual double calculateNeighMeanPow(void);
@@ -119,6 +124,9 @@ protected:
   virtual double calcNextApproaching(void);
 
   virtual double calcApproachingVal(Coord posA, Coord velA, Coord posB, Coord velB);
+
+  virtual void updateMyInfoVector(struct nodeinfo *info);
+  virtual void setVariancesMeans(struct nodeinfo *info);
 
 private:
   void updateForce(void);

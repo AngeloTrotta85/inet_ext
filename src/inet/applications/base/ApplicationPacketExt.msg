@@ -36,11 +36,19 @@ struct nodeinfo
     
     double velTheta;
     double meanVelThetaNeighbourood;
+    
     double velThetaVariance;
+    double velThetaMean;
+    double meanVelThetaVarianceNeighbourood;
+    double meanVelThetaMeanNeighbourood;
     
     double velLength;
     double meanVelLengthNeighbourood;
+    
     double velLengthVariance;
+    double velLengthMean;
+    double meanVelLengthVarianceNeighbourood;
+    double meanVelLengthMeanNeighbourood;
     
     double nextHopDistance;
     double meanNextHopDistanceNeighbourood;

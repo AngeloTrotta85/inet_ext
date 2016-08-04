@@ -40,10 +40,13 @@ void UDPStatisticsApp::initialize(int stage)
         scheduleAt(simTime() + dblrand(), autoMsg);
 
         pysicalDataHistorySize = par("pysicalDataHistorySize");
+        maxListSizeVariances = par("maxListSizeVariances");
 
         mob = check_and_cast<IMobility *>(getParentModule()->getSubmodule("mobility"));
 
         WATCH_MAP(neighbourood);
+        WATCH_LIST(myLastVelLength);
+        WATCH_LIST(myLastVelTheta);
     }
     else if (stage == INITSTAGE_LAST) {
         myAddr = L3AddressResolver().resolve(this->getParentModule()->getFullPath().c_str());
@@ -211,8 +214,14 @@ cPacket *UDPStatisticsApp::createPacket()
     payload->addPar("msgId") = numSent;
 
     struct nodeinfo myInfo, nextInfo;
+
     fillMyInfo(myInfo);
+    updateMyInfoVector(&myInfo);
+    setVariancesMeans(&myInfo);
+    calculateAllMeanNeighbourood(myInfo);
+
     payload->setMyInfo(myInfo);
+
     fillNextInfo(nextInfo);
     payload->setNextInfo(nextInfo);
 
@@ -245,7 +254,7 @@ double UDPStatisticsApp::getDistanceNextHop(void) {
     return ris;
 }
 
-double UDPStatisticsApp::getMean(std::list<double> *l) {
+double UDPStatisticsApp::getWeightedMean(std::list<double> *l) {
     int i = 1;
 
     double w = 0;
@@ -264,6 +273,43 @@ double UDPStatisticsApp::getMean(std::list<double> *l) {
     return ris;
 }
 
+
+void UDPStatisticsApp::getVarianceMean(std::list<double> *l, double &mean, double &variance) {
+    double sum = 0.0;
+    double m = 0.0;
+    double v = 0.0;
+    double lsize = l->size();
+
+    EV << "Calculating Mean and Variance of ";
+    for (auto it = l->begin(); it != l->end(); it++) EV << *it << " ";
+    EV << endl;
+
+    for (auto it = l->begin(); it != l->end(); it++) {
+        sum += (*it);
+    }
+
+    if (lsize == 1){
+        m = sum;
+    }
+    else if (lsize > 1) {
+        double sumV = 0.0;
+
+        m = sum / lsize;
+
+        for (auto it = l->begin(); it != l->end(); it++) {
+            sumV += pow(((*it) - m), 2.0);
+        }
+        v = sumV / (lsize - 1.0);
+    }
+
+    mean = m;
+    variance = v;
+
+    EV << "Result: Mean = " << mean << " and Variance = " << variance << endl;
+
+}
+
+
 void UDPStatisticsApp::calculateNeighMeanPhy(double &pow, double &snr) {
     double sumPow, sumSnr;
     sumPow = sumSnr = 0;
@@ -271,8 +317,8 @@ void UDPStatisticsApp::calculateNeighMeanPhy(double &pow, double &snr) {
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *actual = &(it->second);
 
-        sumPow += getMean(&(actual->lastPowRcv));
-        sumSnr += getMean(&(actual->lastSnrRcv));
+        sumPow += getWeightedMean(&(actual->lastPowRcv));
+        sumSnr += getWeightedMean(&(actual->lastSnrRcv));
     }
 
     if (neighbourood.size() > 0){
@@ -352,12 +398,35 @@ double UDPStatisticsApp::calcNextApproaching(void) {
 
 }
 
+void UDPStatisticsApp::updateMyInfoVector(struct nodeinfo *info) {
+    myLastVelLength.push_front(info->velLength);
+    myLastVelTheta.push_front(info->velTheta);
+    if ((int)myLastVelLength.size() > maxListSizeVariances) {
+        myLastVelLength.pop_back();
+        myLastVelTheta.pop_back();
+    }
+}
+
+void UDPStatisticsApp::setVariancesMeans(struct nodeinfo *info) {
+    double mean, variance;
+
+    getVarianceMean(&myLastVelLength, mean, variance);
+    info->velLengthMean = mean;
+    info->velLengthVariance = variance;
+
+    getVarianceMean(&myLastVelTheta, mean, variance);
+    info->velThetaMean = mean;
+    info->velThetaVariance = variance;
+}
+
 void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
     double count = neighbourood.size();
 
     Coord sumVel = Coord::ZERO;
-    double sumSnr, sumPow, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp, sumVelT, sumVelL;
-    sumSnr = sumPow = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = sumVelT = sumVelL = 0.0;
+    double sumSnr, sumPow, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp;
+    double sumVelT, sumVelTMean, sumVelTVar, sumVelL, sumVelLMean, sumVelLVar;
+    sumSnr = sumPow = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = 0.0;
+    sumVelT = sumVelTMean = sumVelTVar = sumVelL = sumVelLMean = sumVelLVar = 0.0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *act = &(it->second);
@@ -370,7 +439,11 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         sumApp += act->nodeInf.approaching;
         sumNextApp += act->nodeInf.nextHopApproaching;
         sumVelT += act->nodeInf.velTheta;
+        sumVelTMean += act->nodeInf.velThetaMean;
+        sumVelTVar += act->nodeInf.velThetaVariance;
         sumVelL += act->nodeInf.velLength;
+        sumVelLMean += act->nodeInf.velLengthMean;
+        sumVelLVar += act->nodeInf.velLengthVariance;
     }
 
     if (count == 0) {
@@ -382,8 +455,12 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanDistanceNeighbourood = std::numeric_limits<double>::max();
         info.meanApproachingNeighbourood = 0.0;
         info.meanNextHopApproachingNeighbourood = 0.0;
-        info.velTheta = 0.0;
-        info.velLength = 0.0;
+        info.meanVelThetaNeighbourood = 0.0;
+        info.meanVelThetaMeanNeighbourood = 0.0;
+        info.meanVelThetaVarianceNeighbourood = 0.0;
+        info.meanVelLengthNeighbourood = 0.0;
+        info.meanVelLengthMeanNeighbourood = 0.0;
+        info.meanVelLengthVarianceNeighbourood = 0.0;
     }
     else {
         info.meanNodeDegreeNeighbourood = sumDeg / count;
@@ -395,7 +472,11 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanApproachingNeighbourood = sumApp / count;
         info.meanNextHopApproachingNeighbourood = sumNextApp / count;
         info.meanVelThetaNeighbourood = sumVelT / count;
+        info.meanVelThetaMeanNeighbourood = sumVelTMean/ count;
+        info.meanVelThetaVarianceNeighbourood = sumVelTVar / count;
         info.meanVelLengthNeighbourood = sumVelL / count;
+        info.meanVelLengthMeanNeighbourood = sumVelLMean / count;
+        info.meanVelLengthVarianceNeighbourood = sumVelLVar / count;
     }
 }
 
@@ -414,11 +495,11 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
     info.velTheta = mob->getCurrentSpeed().angle(Coord(1.0, 0.0));
     info.velLength = mob->getCurrentSpeed().length();
 
-    calculateAllMeanNeighbourood(info);
+    //calculateAllMeanNeighbourood(info);
 }
 
 void UDPStatisticsApp::fillNextInfo(struct nodeinfo &info) {
-
+    //TODO
 }
 
 
