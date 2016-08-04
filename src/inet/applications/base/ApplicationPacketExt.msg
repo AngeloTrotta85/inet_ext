@@ -34,6 +34,14 @@ struct nodeinfo
     Coord velocity;
     Coord meanVelocityNeighbourood;
     
+    double velTheta;
+    double meanVelThetaNeighbourood;
+    double velThetaVariance;
+    
+    double velLength;
+    double meanVelLengthNeighbourood;
+    double velLengthVariance;
+    
     double nextHopDistance;
     double meanNextHopDistanceNeighbourood;
     

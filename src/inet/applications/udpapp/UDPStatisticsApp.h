@@ -62,6 +62,8 @@ public:
                     " NHDist: " << n.nodeInf.nextHopDistance << " [" << n.nodeInf.meanNextHopDistanceNeighbourood << "]" <<
                     " Appr: " << n.nodeInf.approaching << " [" << n.nodeInf.meanApproachingNeighbourood << "]" <<
                     " NHAppr: " << n.nodeInf.nextHopApproaching << " [" << n.nodeInf.meanNextHopApproachingNeighbourood << "]" <<
+                    " VelT: " << n.nodeInf.velTheta << " [" << n.nodeInf.meanVelThetaNeighbourood << "]" <<
+                    " VelL: " << n.nodeInf.velLength << " [" << n.nodeInf.meanVelLengthNeighbourood << "]" <<
                     "";
 
             return os;
@@ -76,8 +78,13 @@ private:
   int myAppAddr;
   std::map<L3Address, neigh_t> neighbourood;
 
+  // for variances
+  std::list<double> myLastVelLength;
+  std::list<double> myLastVelTheta;
+
   //parameters
   int pysicalDataHistorySize;
+  int maxListSizeVariances;
 
   IMobility *mob;
 

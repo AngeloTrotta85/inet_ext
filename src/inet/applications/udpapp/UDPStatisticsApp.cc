@@ -356,8 +356,8 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
     double count = neighbourood.size();
 
     Coord sumVel = Coord::ZERO;
-    double sumSnr, sumPow, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp;
-    sumSnr = sumPow = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = 0.0;
+    double sumSnr, sumPow, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp, sumVelT, sumVelL;
+    sumSnr = sumPow = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = sumVelT = sumVelL = 0.0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *act = &(it->second);
@@ -369,6 +369,8 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         sumDist += act->nodeInf.distance;
         sumApp += act->nodeInf.approaching;
         sumNextApp += act->nodeInf.nextHopApproaching;
+        sumVelT += act->nodeInf.velTheta;
+        sumVelL += act->nodeInf.velLength;
     }
 
     if (count == 0) {
@@ -380,6 +382,8 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanDistanceNeighbourood = std::numeric_limits<double>::max();
         info.meanApproachingNeighbourood = 0.0;
         info.meanNextHopApproachingNeighbourood = 0.0;
+        info.velTheta = 0.0;
+        info.velLength = 0.0;
     }
     else {
         info.meanNodeDegreeNeighbourood = sumDeg / count;
@@ -390,6 +394,8 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanDistanceNeighbourood = sumDist / count;
         info.meanApproachingNeighbourood = sumApp / count;
         info.meanNextHopApproachingNeighbourood = sumNextApp / count;
+        info.meanVelThetaNeighbourood = sumVelT / count;
+        info.meanVelLengthNeighbourood = sumVelL / count;
     }
 }
 
@@ -405,6 +411,8 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
     info.distance = calcMeanNeighDistance();
     info.approaching = calcApproachingNeigh();
     info.nextHopApproaching = calcNextApproaching();
+    info.velTheta = mob->getCurrentSpeed().angle(Coord(1.0, 0.0));
+    info.velLength = mob->getCurrentSpeed().length();
 
     calculateAllMeanNeighbourood(info);
 }
