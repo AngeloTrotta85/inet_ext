@@ -25,4 +25,7 @@ class UDPDataIndicationExt extends UDPDataIndication
 {   
     double snr;
     double pow;
+    double per;
+    double queueMacPerc;
+    double queueMacAbs;
 }

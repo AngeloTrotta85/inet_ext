@@ -139,8 +139,8 @@ void IPv4Ext::preroutingFinish(IPv4Datagram *datagram, const InterfaceEntry *fro
 
 cPacket *IPv4Ext::decapsulate(IPv4Datagram *datagram)
 {
-    double snr, pow;
-    snr = pow = 0;
+    double snr, pow, per, qAbs, qPerc;
+    snr = pow = per = qAbs = qPerc = 0;
 
     cObject *c = datagram->removeControlInfo();
     //EV_DEBUG << "IPv4Ext::decapsulate: " << c << std::endl;
@@ -160,6 +160,9 @@ cPacket *IPv4Ext::decapsulate(IPv4Datagram *datagram)
 
         snr = cExt->getRcvSnr();
         pow = cExt->getRcvPow();
+        per = cExt->getRcvPER();
+        qAbs = cExt->getQueueMacAbs();
+        qPerc = cExt->getQueueMacPerc();
 
         EV_DEBUG << "IPv4Ext::decapsulate Saving POW: " << pow << " and SNR: " << snr << std::endl;
     }
@@ -182,6 +185,9 @@ cPacket *IPv4Ext::decapsulate(IPv4Datagram *datagram)
 
     controlInfo->setPow(pow);
     controlInfo->setSnr(snr);
+    controlInfo->setPER(per);
+    controlInfo->setQueueMacPerc(qPerc);
+    controlInfo->setQueueMacAbs(qAbs);
 
     EV_DEBUG << "IPv4Ext::decapsulate Setting POW: " << pow << " and SNR: " << snr << std::endl;
 

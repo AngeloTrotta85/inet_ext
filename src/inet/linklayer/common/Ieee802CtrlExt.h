@@ -32,6 +32,9 @@ class INET_API Ieee802CtrlExt : public Ieee802Ctrl
 protected:
     double rcvPow;
     double rcvSnr;
+    double rcvPER;
+    double queueMacPerc;
+    double queueMacAbs;
 
   public:
     Ieee802CtrlExt() : Ieee802Ctrl() {}
@@ -43,6 +46,15 @@ protected:
 
     virtual double getRcvSnr() const { return rcvSnr;  }
     virtual void setRcvSnr(double rcvSnr) { this->rcvSnr = rcvSnr; }
+
+    double getQueueMacAbs() const { return queueMacAbs; }
+    void setQueueMacAbs(double queueMacAbs) { this->queueMacAbs = queueMacAbs; }
+
+    double getQueueMacPerc() const { return queueMacPerc; }
+    void setQueueMacPerc(double queueMacPerc) { this->queueMacPerc = queueMacPerc; }
+
+    double getRcvPER() const { return rcvPER; }
+    void setRcvPER(double rcvPer) { rcvPER = rcvPer; }
 };
 
 } // namespace inet

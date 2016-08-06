@@ -58,9 +58,6 @@ struct nodeinfo
     
     double approaching;
     double meanApproachingNeighbourood;
-    
-    double nextHopApproaching;
-    double meanNextHopApproachingNeighbourood;
         
     int nodeDegree;
     double meanNodeDegreeNeighbourood;
@@ -69,6 +66,19 @@ struct nodeinfo
     double snrNeighbourood;
 	double meanPowNeighbourood;	
     double powNeighbourood;
+	double meanPerNeighbourood;
+    double perNeighbourood;
+    
+    // MAC info
+    double queueMacSizeAbs;
+    double meanQueueMacSizeAbsNeighbourood;
+    double queueMacSizePerc;
+    double meanQueueMacSizePercNeighbourood;
+    
+    
+    // next-hop info
+    double nextHopApproaching;
+    double meanNextHopApproachingNeighbourood;
 };
 
 packet ApplicationPacketExt {

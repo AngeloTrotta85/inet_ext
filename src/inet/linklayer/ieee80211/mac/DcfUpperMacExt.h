@@ -34,6 +34,9 @@ class INET_API DcfUpperMacExt : public DcfUpperMac
 {
     public:
         virtual void lowerFrameReceived(Ieee80211Frame *frame) override;
+
+        virtual double getQueuePerc() {return (((double) transmissionQueue.getLength()) / ((double) maxQueueSize));}
+        virtual double getQueueAbs() {return transmissionQueue.getLength();}
 };
 
 } // namespace ieee80211

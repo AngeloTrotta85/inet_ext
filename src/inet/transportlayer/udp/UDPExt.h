@@ -49,6 +49,9 @@ class INET_API UDPExt : public UDP
   private:
     double lastpow;
     double lastsnr;
+    double lastper;
+    double lastqPerc;
+    double lastqAbs;
 };
 
 } // namespace inet

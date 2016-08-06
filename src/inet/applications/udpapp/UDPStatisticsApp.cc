@@ -43,6 +43,7 @@ void UDPStatisticsApp::initialize(int stage)
         maxListSizeVariances = par("maxListSizeVariances");
 
         mob = check_and_cast<IMobility *>(getParentModule()->getSubmodule("mobility"));
+        dcfMac = check_and_cast<ieee80211::DcfUpperMacExt *>(getParentModule()->getSubmodule("wlan", 0)->getSubmodule("mac")->getSubmodule("upperMac"));
 
         WATCH_MAP(neighbourood);
         WATCH_LIST(myLastVelLength);
@@ -138,6 +139,9 @@ void UDPStatisticsApp::processPacket(cPacket *pk)
         di = check_and_cast<UDPDataIndicationExt *>(c);
         EV_DEBUG << "Pow: " << di->getPow() << std::endl;
         EV_DEBUG << "Snr: " << di->getSnr() << std::endl;
+        EV_DEBUG << "PER: " << di->getPer() << std::endl;
+        EV_DEBUG << "MAC queue Perc: " << di->getQueueMacPerc() << std::endl;
+        EV_DEBUG << "MAC queue Abs: " << di->getQueueMacAbs() << std::endl;
     }
     else {
         EV_DEBUG << "NO CONTROL INFO: " << c << std::endl;
@@ -179,6 +183,10 @@ void UDPStatisticsApp::manageReceivedPkt(cPacket *pk, UDPDataIndicationExt *info
         n->lastSnrRcv.push_front(info->getSnr());
         if ((int)n->lastSnrRcv.size() > pysicalDataHistorySize) {
             n->lastSnrRcv.pop_back();
+        }
+        n->lastPerRcv.push_front(info->getPer());
+        if ((int)n->lastPerRcv.size() > pysicalDataHistorySize) {
+            n->lastPerRcv.pop_back();
         }
     }
 }
@@ -310,33 +318,41 @@ void UDPStatisticsApp::getVarianceMean(std::list<double> *l, double &mean, doubl
 }
 
 
-void UDPStatisticsApp::calculateNeighMeanPhy(double &pow, double &snr) {
-    double sumPow, sumSnr;
-    sumPow = sumSnr = 0;
+void UDPStatisticsApp::calculateNeighMeanPhy(double &pow, double &snr, double &per) {
+    double sumPow, sumSnr, sumPer;
+    sumPow = sumSnr = sumPer = 0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *actual = &(it->second);
 
         sumPow += getWeightedMean(&(actual->lastPowRcv));
         sumSnr += getWeightedMean(&(actual->lastSnrRcv));
+        sumPer += getWeightedMean(&(actual->lastPerRcv));
     }
 
     if (neighbourood.size() > 0){
         snr = sumSnr / ((double) neighbourood.size());
         pow = sumPow / ((double) neighbourood.size());
+        per = sumPer / ((double) neighbourood.size());
     }
 }
 
 double UDPStatisticsApp::calculateNeighMeanSnr(void) {
-    double pow, snr;
-    calculateNeighMeanPhy(pow, snr);
+    double pow, snr, per;
+    calculateNeighMeanPhy(pow, snr, per);
     return snr;
 }
 
 double UDPStatisticsApp::calculateNeighMeanPow(void) {
-    double pow, snr;
-    calculateNeighMeanPhy(pow, snr);
+    double pow, snr, per;
+    calculateNeighMeanPhy(pow, snr, per);
     return pow;
+}
+
+double UDPStatisticsApp::calculateNeighMeanPer(void) {
+    double pow, snr, per;
+    calculateNeighMeanPhy(pow, snr, per);
+    return per;
 }
 
 double UDPStatisticsApp::calcMeanNeighDistance(void) {
@@ -423,15 +439,16 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
     double count = neighbourood.size();
 
     Coord sumVel = Coord::ZERO;
-    double sumSnr, sumPow, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp;
-    double sumVelT, sumVelTMean, sumVelTVar, sumVelL, sumVelLMean, sumVelLVar;
-    sumSnr = sumPow = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = 0.0;
-    sumVelT = sumVelTMean = sumVelTVar = sumVelL = sumVelLMean = sumVelLVar = 0.0;
+    double sumSnr, sumPow, sumPer, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp;
+    double sumVelT, sumVelTMean, sumVelTVar, sumVelL, sumVelLMean, sumVelLVar, sumMacQAbs, sumMacQPerc;
+    sumSnr = sumPow = sumPer = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = 0.0;
+    sumVelT = sumVelTMean = sumVelTVar = sumVelL = sumVelLMean = sumVelLVar = sumMacQAbs = sumMacQPerc = 0.0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *act = &(it->second);
         sumSnr += act->nodeInf.snrNeighbourood;
         sumPow += act->nodeInf.powNeighbourood;
+        sumPer += act->nodeInf.perNeighbourood;
         sumDeg += act->nodeInf.nodeDegree;
         sumVel += act->nodeInf.velocity;
         sumNextDist += act->nodeInf.nextHopDistance;
@@ -444,11 +461,14 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         sumVelL += act->nodeInf.velLength;
         sumVelLMean += act->nodeInf.velLengthMean;
         sumVelLVar += act->nodeInf.velLengthVariance;
+        sumMacQAbs += act->nodeInf.queueMacSizeAbs;
+        sumMacQPerc += act->nodeInf.queueMacSizePerc;
     }
 
     if (count == 0) {
         info.meanNodeDegreeNeighbourood = 0.0;
         info.meanPowNeighbourood = 0.0;
+        info.meanPerNeighbourood = 0.0;
         info.meanSnrNeighbourood = 0.0;
         info.meanVelocityNeighbourood = Coord::ZERO;
         info.meanNextHopDistanceNeighbourood = 0.0;
@@ -461,10 +481,13 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanVelLengthNeighbourood = 0.0;
         info.meanVelLengthMeanNeighbourood = 0.0;
         info.meanVelLengthVarianceNeighbourood = 0.0;
+        info.meanQueueMacSizeAbsNeighbourood = 0.0;
+        info.meanQueueMacSizePercNeighbourood = 0.0;
     }
     else {
         info.meanNodeDegreeNeighbourood = sumDeg / count;
         info.meanPowNeighbourood = sumPow / count;
+        info.meanPerNeighbourood = sumPer / count;
         info.meanSnrNeighbourood = sumSnr / count;
         info.meanVelocityNeighbourood = sumVel / count;
         info.meanNextHopDistanceNeighbourood = sumNextDist / count;
@@ -477,6 +500,8 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanVelLengthNeighbourood = sumVelL / count;
         info.meanVelLengthMeanNeighbourood = sumVelLMean / count;
         info.meanVelLengthVarianceNeighbourood = sumVelLVar / count;
+        info.meanQueueMacSizeAbsNeighbourood = sumMacQAbs / count;
+        info.meanQueueMacSizePercNeighbourood = sumMacQPerc / count;
     }
 }
 
@@ -486,6 +511,7 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
     info.nodeDegree = neighbourood.size();
     info.snrNeighbourood = calculateNeighMeanSnr();
     info.powNeighbourood = calculateNeighMeanPow();
+    info.perNeighbourood = calculateNeighMeanPer();
     info.pos = mob->getCurrentPosition();
     info.velocity = mob->getCurrentSpeed();
     info.nextHopDistance = getDistanceNextHop();
@@ -494,6 +520,10 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
     info.nextHopApproaching = calcNextApproaching();
     info.velTheta = mob->getCurrentSpeed().angle(Coord(1.0, 0.0));
     info.velLength = mob->getCurrentSpeed().length();
+
+    //MAC
+    info.queueMacSizeAbs = dcfMac->getQueueAbs();
+    info.queueMacSizePerc = dcfMac->getQueuePerc();
 
     //calculateAllMeanNeighbourood(info);
 }

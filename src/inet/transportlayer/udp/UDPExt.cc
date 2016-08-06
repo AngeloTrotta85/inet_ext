@@ -50,6 +50,9 @@ void UDPExt::sendUp(cPacket *payload, SockDesc *sd, const L3Address& srcAddr, us
     udpCtrl->setTypeOfService(tos);
     udpCtrl->setPow(lastpow);
     udpCtrl->setSnr(lastsnr);
+    udpCtrl->setPer(lastper);
+    udpCtrl->setQueueMacPerc(lastqPerc);
+    udpCtrl->setQueueMacAbs(lastqAbs);
     payload->setControlInfo(udpCtrl);
     payload->setKind(UDP_I_DATA);
 
@@ -75,6 +78,9 @@ void UDPExt::saveInfo(cPacket *pkt) {
         IPv4ControlInfoExt *ip4ext = check_and_cast<IPv4ControlInfoExt *>(c);
         lastpow = ip4ext->getPow();
         lastsnr = ip4ext->getSnr();
+        lastper = ip4ext->getPER();
+        lastqPerc = ip4ext->getQueueMacPerc();
+        lastqAbs = ip4ext->getQueueMacAbs();
 
         EV_DEBUG << "Saving POW: " << lastpow << " and SNR: " << lastsnr << std::endl;
     }

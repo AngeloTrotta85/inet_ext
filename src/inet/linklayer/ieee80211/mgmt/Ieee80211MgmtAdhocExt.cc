@@ -31,8 +31,8 @@ Define_Module(Ieee80211MgmtAdhocExt);
 
 cPacket *Ieee80211MgmtAdhocExt::decapsulate(Ieee80211DataFrame *frame)
 {
-    double snr, pow;
-    snr = pow = 0;
+    double snr, pow, per, qAbs, qPerc;
+    snr = pow = per = qAbs = qPerc = 0;
 
     cObject *c = frame->getControlInfo();
     if (c) {
@@ -46,10 +46,14 @@ cPacket *Ieee80211MgmtAdhocExt::decapsulate(Ieee80211DataFrame *frame)
         EV_DEBUG << "getOwner Info: " << c->getOwner() << std::endl;
         EV_DEBUG << "info Info: " << c->info() << std::endl;*/
 
-        inet::physicallayer::Ieee80211ReceptionIndication *cExt = check_and_cast<inet::physicallayer::Ieee80211ReceptionIndication *>(c);
+        //inet::physicallayer::Ieee80211ReceptionIndication *cExt = check_and_cast<inet::physicallayer::Ieee80211ReceptionIndication *>(c);
+        Ieee802CtrlExt *cExt = check_and_cast<Ieee802CtrlExt *>(c);
 
-        pow =  cExt->getRecPow();
-        snr = cExt->getSnr();
+        pow =  cExt->getRcvPow();
+        snr = cExt->getRcvSnr();
+        per = cExt->getRcvPER();
+        qAbs = cExt->getQueueMacAbs();
+        qPerc = cExt->getQueueMacPerc();
 
         EV_DEBUG << "Ieee80211MgmtAdhocExt::decapsulate Getting POW: " << pow << " and SNR: " << snr << std::endl;
 
@@ -67,6 +71,9 @@ cPacket *Ieee80211MgmtAdhocExt::decapsulate(Ieee80211DataFrame *frame)
     ctrl->setDest(frame->getReceiverAddress());
     ctrl->setRcvPow(pow);
     ctrl->setRcvSnr(snr);
+    ctrl->setRcvPER(per);
+    ctrl->setQueueMacAbs(qAbs);
+    ctrl->setQueueMacPerc(qPerc);
 
     EV_DEBUG << "Ieee80211MgmtAdhocExt::decapsulate Setting POW: " << pow << " and SNR: " << snr << std::endl;
 

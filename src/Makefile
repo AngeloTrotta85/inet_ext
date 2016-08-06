@@ -232,6 +232,7 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/common/InitStages.h \
 	$(INET_PROJ)/src/inet/common/ModuleAccess.h \
 	$(INET_PROJ)/src/inet/common/NotifierConsts.h \
+	$(INET_PROJ)/src/inet/common/Units.h \
 	$(INET_PROJ)/src/inet/common/geometry/common/Coord.h \
 	$(INET_PROJ)/src/inet/common/geometry/common/EulerAngles.h \
 	$(INET_PROJ)/src/inet/common/lifecycle/ILifecycle.h \
@@ -240,6 +241,10 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/common/lifecycle/OperationalBase.h \
 	$(INET_PROJ)/src/inet/features.h \
 	$(INET_PROJ)/src/inet/linklayer/common/MACAddress.h \
+	$(INET_PROJ)/src/inet/linklayer/ieee80211/mac/AccessCategory.h \
+	$(INET_PROJ)/src/inet/linklayer/ieee80211/mac/DcfUpperMac.h \
+	$(INET_PROJ)/src/inet/linklayer/ieee80211/mac/IFrameExchange.h \
+	$(INET_PROJ)/src/inet/linklayer/ieee80211/mac/IUpperMac.h \
 	$(INET_PROJ)/src/inet/mobility/contract/IMobility.h \
 	$(INET_PROJ)/src/inet/networklayer/common/InterfaceEntry.h \
 	$(INET_PROJ)/src/inet/networklayer/common/InterfaceToken.h \
@@ -252,11 +257,16 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/networklayer/contract/IRoutingTable.h \
 	$(INET_PROJ)/src/inet/networklayer/contract/ipv4/IPv4Address.h \
 	$(INET_PROJ)/src/inet/networklayer/contract/ipv6/IPv6Address.h \
+	$(INET_PROJ)/src/inet/physicallayer/base/packetlevel/PhysicalLayerDefs.h \
+	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/IModulation.h \
+	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/IPrintableObject.h \
+	$(INET_PROJ)/src/inet/physicallayer/ieee80211/mode/IIeee80211Mode.h \
 	$(INET_PROJ)/src/inet/transportlayer/contract/udp/UDPControlInfo.h \
 	$(INET_PROJ)/src/inet/transportlayer/contract/udp/UDPControlInfo_m.h \
 	$(INET_PROJ)/src/inet/transportlayer/contract/udp/UDPSocket.h \
 	inet/applications/base/ApplicationPacketExt_m.h \
 	inet/applications/udpapp/UDPStatisticsApp.h \
+	inet/linklayer/ieee80211/mac/DcfUpperMacExt.h \
 	inet/transportlayer/contract/udp/UDPDataIndicationExt_m.h
 $O/inet/linklayer/ieee80211/mac/DcfUpperMacExt.o: inet/linklayer/ieee80211/mac/DcfUpperMacExt.cc \
 	$(INET_PROJ)/src/inet/common/Compat.h \
@@ -281,8 +291,10 @@ $O/inet/linklayer/ieee80211/mac/DcfUpperMacExt.o: inet/linklayer/ieee80211/mac/D
 	$(INET_PROJ)/src/inet/common/queue/IPassiveQueue.h \
 	$(INET_PROJ)/src/inet/features.h \
 	$(INET_PROJ)/src/inet/linklayer/base/MACProtocolBase.h \
+	$(INET_PROJ)/src/inet/linklayer/common/Ieee802Ctrl.h \
 	$(INET_PROJ)/src/inet/linklayer/common/Ieee802Ctrl_m.h \
 	$(INET_PROJ)/src/inet/linklayer/common/MACAddress.h \
+	$(INET_PROJ)/src/inet/linklayer/contract/IMACProtocolControlInfo.h \
 	$(INET_PROJ)/src/inet/linklayer/ieee80211/mac/AccessCategory.h \
 	$(INET_PROJ)/src/inet/linklayer/ieee80211/mac/DcfUpperMac.h \
 	$(INET_PROJ)/src/inet/linklayer/ieee80211/mac/DuplicateDetectors.h \
@@ -343,6 +355,7 @@ $O/inet/linklayer/ieee80211/mac/DcfUpperMacExt.o: inet/linklayer/ieee80211/mac/D
 	$(INET_PROJ)/src/inet/physicallayer/ieee80211/mode/Ieee80211Channel.h \
 	$(INET_PROJ)/src/inet/physicallayer/ieee80211/mode/Ieee80211ModeSet.h \
 	$(INET_PROJ)/src/inet/physicallayer/ieee80211/packetlevel/Ieee80211ControlInfo_m.h \
+	inet/linklayer/common/Ieee802CtrlExt.h \
 	inet/linklayer/ieee80211/mac/DcfUpperMacExt.h
 $O/inet/linklayer/ieee80211/mgmt/Ieee80211MgmtAdhocExt.o: inet/linklayer/ieee80211/mgmt/Ieee80211MgmtAdhocExt.cc \
 	$(INET_PROJ)/src/inet/common/Compat.h \

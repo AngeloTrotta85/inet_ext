@@ -37,6 +37,7 @@
 #include "inet/physicallayer/ieee80211/mode/Ieee80211ModeSet.h"
 
 #include "inet/physicallayer/ieee80211/packetlevel/Ieee80211ControlInfo_m.h"
+#include "inet/linklayer/common/Ieee802CtrlExt.h"
 
 namespace inet {
 namespace ieee80211 {
@@ -50,6 +51,17 @@ inline simtime_t fallback(simtime_t a, simtime_t b) {return a!=-1 ? a : b;}
 void DcfUpperMacExt::lowerFrameReceived(Ieee80211Frame *frame)
 {
     Enter_Method("lowerFrameReceived(\"%s\")", frame->getName());
+
+    //transmissionQueue.length() >= maxQueueSize
+    Ieee80211ReceptionIndication *c = check_and_cast<Ieee80211ReceptionIndication *>(frame->removeControlInfo());
+
+    Ieee802CtrlExt *ctrl = new Ieee802CtrlExt();
+    ctrl->setRcvPow(c->getRecPow());
+    ctrl->setRcvSnr(c->getSnr());
+    ctrl->setRcvPER(c->getPacketErrorRate());
+    ctrl->setQueueMacAbs(transmissionQueue.getLength());
+    ctrl->setQueueMacPerc(((double) transmissionQueue.getLength()) / ((double) maxQueueSize));
+
     //delete frame->removeControlInfo();          //TODO
     /*Ieee80211ReceptionIndication *c = check_and_cast<Ieee80211ReceptionIndication *>(frame->removeControlInfo());
 
@@ -108,12 +120,17 @@ void DcfUpperMacExt::lowerFrameReceived(Ieee80211Frame *frame)
                 delete dataOrMgmtFrame;
             }
             else {
-                if (!utils->isFragment(dataOrMgmtFrame))
+
+                if (!utils->isFragment(dataOrMgmtFrame)){
+                    dataOrMgmtFrame->setControlInfo(ctrl);      // ADDED by Angelo Trotta
                     mac->sendUp(dataOrMgmtFrame);
+                }
                 else {
                     Ieee80211DataOrMgmtFrame *completeFrame = reassembly->addFragment(dataOrMgmtFrame);
-                    if (completeFrame)
+                    if (completeFrame){
+                        completeFrame->setControlInfo(ctrl);      // ADDED by Angelo Trotta
                         mac->sendUp(completeFrame);
+                    }
                 }
             }
         }

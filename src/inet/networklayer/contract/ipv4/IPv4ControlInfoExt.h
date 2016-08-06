@@ -32,6 +32,9 @@ class INET_API IPv4ControlInfoExt : public IPv4ControlInfo
   private:
     double snr;
     double pow;
+    double rcvPER;
+    double queueMacPerc;
+    double queueMacAbs;
 
   public:
     IPv4ControlInfoExt() : IPv4ControlInfo() { pow = 0; snr = 0; };
@@ -45,6 +48,15 @@ class INET_API IPv4ControlInfoExt : public IPv4ControlInfo
 
     double getSnr() const { return snr; }
     void setSnr(double snr) { this->snr = snr; }
+
+    double getQueueMacAbs() const { return queueMacAbs; }
+    void setQueueMacAbs(double queueMacAbs) { this->queueMacAbs = queueMacAbs; }
+
+    double getQueueMacPerc() const { return queueMacPerc; }
+    void setQueueMacPerc(double queueMacPerc) { this->queueMacPerc = queueMacPerc; }
+
+    double getPER() const { return rcvPER; }
+    void setPER(double rcvPer) { rcvPER = rcvPer; }
 };
 
 } // namespace inet

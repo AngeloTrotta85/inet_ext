@@ -21,6 +21,9 @@
 
 #include "inet/common/INETDefs.h"
 
+
+#include <ieee80211/mac/DcfUpperMacExt.h>
+
 #include "inet/applications/udpapp/UDPBasicBurst.h"
 #include "inet/transportlayer/contract/udp/UDPSocket.h"
 
@@ -46,6 +49,7 @@ public:
         // local data. NOT SENT directly
         std::list<double> lastSnrRcv;
         std::list<double> lastPowRcv;
+        std::list<double> lastPerRcv;
 
         friend std::ostream& operator << (std::ostream& os, neighStruct& n) {
             //os << "Addr: " << n.addr << " Degree: " << n.degree;// << " NeighList: " << neigh;
@@ -56,6 +60,7 @@ public:
                     " Deg: " << n.nodeInf.nodeDegree << " [" << n.nodeInf.meanNodeDegreeNeighbourood << "]" <<
                     " SNR: " << n.nodeInf.snrNeighbourood << " [" << n.nodeInf.meanSnrNeighbourood << "]" <<
                     " Pow: " << n.nodeInf.powNeighbourood << " [" << n.nodeInf.meanPowNeighbourood << "]" <<
+                    " Per: " << n.nodeInf.perNeighbourood << " [" << n.nodeInf.meanPerNeighbourood << "]" <<
                     " Pos: " << n.nodeInf.pos <<
                     " Vel: " << n.nodeInf.velocity << " [" << n.nodeInf.meanVelocityNeighbourood << "]" <<
                     " Dist: " << n.nodeInf.distance << " [" << n.nodeInf.meanDistanceNeighbourood << "]" <<
@@ -68,6 +73,8 @@ public:
                     " VelL: " << n.nodeInf.velLength << " [" << n.nodeInf.meanVelLengthNeighbourood << "]" <<
                     " VelLm: " << n.nodeInf.velLengthMean << " [" << n.nodeInf.meanVelLengthMeanNeighbourood << "]" <<
                     " VelLv: " << n.nodeInf.velLengthVariance << " [" << n.nodeInf.meanVelLengthVarianceNeighbourood << "]" <<
+                    " MacQAbs: " << n.nodeInf.queueMacSizeAbs << " [" << n.nodeInf.meanQueueMacSizeAbsNeighbourood << "]" <<
+                    " MacQPerc: " << n.nodeInf.queueMacSizePerc << " [" << n.nodeInf.meanQueueMacSizePercNeighbourood << "]" <<
                     "";
 
             return os;
@@ -91,6 +98,7 @@ private:
   int maxListSizeVariances;
 
   IMobility *mob;
+  ieee80211::DcfUpperMacExt *dcfMac;
 
 protected:
   virtual int numInitStages() const override { return NUM_INIT_STAGES; }
@@ -110,9 +118,10 @@ protected:
 
   virtual double getWeightedMean(std::list<double> *l);
   virtual void getVarianceMean(std::list<double> *l, double &mean, double &variance);
-  virtual void calculateNeighMeanPhy(double &pow, double &snr);
+  virtual void calculateNeighMeanPhy(double &pow, double &snr, double &per);
   virtual double calculateNeighMeanSnr(void);
   virtual double calculateNeighMeanPow(void);
+  virtual double calculateNeighMeanPer(void);
 
   virtual void calculateAllMeanNeighbourood(struct nodeinfo &info);
 
