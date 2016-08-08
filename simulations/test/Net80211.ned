@@ -25,6 +25,8 @@ import inet.networklayer.configurator.ipv4.IPv4NetworkConfigurator;
 import inet.networklayer.ipv4.RoutingTableRecorder;
 import inet.node.aodv.AODVRouter;
 
+import inet.node.inet.INetworkNode;
+
 
 network Net80211test
 {
@@ -33,8 +35,9 @@ network Net80211test
         string routerType @enum("AODVRouter", "DYMORouter", "GPSRRouter") = default("AODVRouter");
     submodules:
         //host[numHosts]: AdhocHost {
-        host[numHosts]: AODVRouter {
+        //host[numHosts]: AODVRouter {
         //host[numHosts]: DYMORouter {
+        host[numHosts]: <routerType> like INetworkNode{
             parameters:
                 @display("r=,,#707070;p=250,58");
         }

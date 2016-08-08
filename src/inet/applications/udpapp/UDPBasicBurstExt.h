@@ -47,9 +47,12 @@ class INET_API UDPBasicBurstExt : public UDPBasicBurst
     UDPBasicBurstExt() {};
     ~UDPBasicBurstExt() {};
 
+    virtual L3Address getDestAddr(void);
+
   private:
   //  int destAddrIdx;
     L3Address myAddr;
+    L3Address actualDestAddr;
 };
 
 } // namespace inet

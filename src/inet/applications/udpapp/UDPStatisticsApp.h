@@ -25,6 +25,7 @@
 #include <ieee80211/mac/DcfUpperMacExt.h>
 
 #include "inet/applications/udpapp/UDPBasicBurst.h"
+#include "inet/applications/udpapp/UDPBasicBurstExt.h"
 #include "inet/transportlayer/contract/udp/UDPSocket.h"
 
 #include "inet/transportlayer/contract/udp/UDPDataIndicationExt_m.h"
@@ -99,6 +100,7 @@ private:
 
   IMobility *mob;
   ieee80211::DcfUpperMacExt *dcfMac;
+  UDPBasicBurstExt *udpbb;
 
 protected:
   virtual int numInitStages() const override { return NUM_INIT_STAGES; }

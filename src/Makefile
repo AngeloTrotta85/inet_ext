@@ -232,12 +232,15 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/common/InitStages.h \
 	$(INET_PROJ)/src/inet/common/ModuleAccess.h \
 	$(INET_PROJ)/src/inet/common/NotifierConsts.h \
+	$(INET_PROJ)/src/inet/common/TLVOption.h \
+	$(INET_PROJ)/src/inet/common/TLVOption_m.h \
 	$(INET_PROJ)/src/inet/common/Units.h \
 	$(INET_PROJ)/src/inet/common/geometry/common/Coord.h \
 	$(INET_PROJ)/src/inet/common/geometry/common/EulerAngles.h \
 	$(INET_PROJ)/src/inet/common/lifecycle/ILifecycle.h \
 	$(INET_PROJ)/src/inet/common/lifecycle/LifecycleOperation.h \
 	$(INET_PROJ)/src/inet/common/lifecycle/NodeOperations.h \
+	$(INET_PROJ)/src/inet/common/lifecycle/NodeStatus.h \
 	$(INET_PROJ)/src/inet/common/lifecycle/OperationalBase.h \
 	$(INET_PROJ)/src/inet/features.h \
 	$(INET_PROJ)/src/inet/linklayer/common/MACAddress.h \
@@ -253,6 +256,10 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/networklayer/common/ModuleIdAddress.h \
 	$(INET_PROJ)/src/inet/networklayer/common/ModulePathAddress.h \
 	$(INET_PROJ)/src/inet/networklayer/contract/IInterfaceTable.h \
+	$(INET_PROJ)/src/inet/networklayer/contract/IL3AddressType.h \
+	$(INET_PROJ)/src/inet/networklayer/contract/INetfilter.h \
+	$(INET_PROJ)/src/inet/networklayer/contract/INetworkDatagram.h \
+	$(INET_PROJ)/src/inet/networklayer/contract/INetworkProtocolControlInfo.h \
 	$(INET_PROJ)/src/inet/networklayer/contract/IRoute.h \
 	$(INET_PROJ)/src/inet/networklayer/contract/IRoutingTable.h \
 	$(INET_PROJ)/src/inet/networklayer/contract/ipv4/IPv4Address.h \
@@ -261,10 +268,25 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/IModulation.h \
 	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/IPrintableObject.h \
 	$(INET_PROJ)/src/inet/physicallayer/ieee80211/mode/IIeee80211Mode.h \
+	$(INET_PROJ)/src/inet/routing/aodv/AODVControlPackets_m.h \
+	$(INET_PROJ)/src/inet/routing/aodv/AODVRouteData.h \
+	$(INET_PROJ)/src/inet/routing/aodv/AODVRouting.h \
+	$(INET_PROJ)/src/inet/routing/dymo/DYMO.h \
+	$(INET_PROJ)/src/inet/routing/dymo/DYMORouteData.h \
+	$(INET_PROJ)/src/inet/routing/dymo/DYMO_m.h \
+	$(INET_PROJ)/src/inet/routing/dymo/DYMOdefs.h \
+	$(INET_PROJ)/src/inet/routing/gpsr/GPSR.h \
+	$(INET_PROJ)/src/inet/routing/gpsr/GPSRDefs.h \
+	$(INET_PROJ)/src/inet/routing/gpsr/GPSR_m.h \
+	$(INET_PROJ)/src/inet/routing/gpsr/PositionTable.h \
+	$(INET_PROJ)/src/inet/transportlayer/contract/ITransportPacket.h \
 	$(INET_PROJ)/src/inet/transportlayer/contract/udp/UDPControlInfo.h \
 	$(INET_PROJ)/src/inet/transportlayer/contract/udp/UDPControlInfo_m.h \
 	$(INET_PROJ)/src/inet/transportlayer/contract/udp/UDPSocket.h \
+	$(INET_PROJ)/src/inet/transportlayer/udp/UDPPacket.h \
+	$(INET_PROJ)/src/inet/transportlayer/udp/UDPPacket_m.h \
 	inet/applications/base/ApplicationPacketExt_m.h \
+	inet/applications/udpapp/UDPBasicBurstExt.h \
 	inet/applications/udpapp/UDPStatisticsApp.h \
 	inet/linklayer/ieee80211/mac/DcfUpperMacExt.h \
 	inet/transportlayer/contract/udp/UDPDataIndicationExt_m.h

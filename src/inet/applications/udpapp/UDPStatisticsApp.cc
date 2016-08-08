@@ -23,6 +23,12 @@
 
 #include "inet/common/geometry/common/Coord.h"
 
+#include "inet/routing/aodv/AODVRouting.h"
+#include "inet/routing/gpsr/GPSR.h"
+#include "inet/routing/dymo/DYMO.h"
+
+#include "inet/networklayer/contract/IRoutingTable.h"
+
 namespace inet {
 
 Define_Module(UDPStatisticsApp);
@@ -44,6 +50,7 @@ void UDPStatisticsApp::initialize(int stage)
 
         mob = check_and_cast<IMobility *>(getParentModule()->getSubmodule("mobility"));
         dcfMac = check_and_cast<ieee80211::DcfUpperMacExt *>(getParentModule()->getSubmodule("wlan", 0)->getSubmodule("mac")->getSubmodule("upperMac"));
+        udpbb = check_and_cast<UDPBasicBurstExt *>(getParentModule()->getSubmodule("udpApp", 1));
 
         WATCH_MAP(neighbourood);
         WATCH_LIST(myLastVelLength);
@@ -245,7 +252,64 @@ cPacket *UDPStatisticsApp::createPacket()
 
 IPv4Address UDPStatisticsApp::getNextHopAddress(void) {
     IPv4Address nextAdd = IPv4Address::UNSPECIFIED_ADDRESS;
-    //TODO
+    IRoutingTable *routingTable = dynamic_cast<IRoutingTable *>(this->getParentModule()->getSubmodule("routingTable"));
+
+    if (dynamic_cast<AODVRouting *>(this->getParentModule()->getSubmodule("aodv"))) {
+        //AODVRouting *aodv = check_and_cast<AODVRouting *>(this->getParentModule()->getSubmodule("aodv"));
+        IRoute *route = routingTable->findBestMatchingRoute(udpbb->getDestAddr());
+
+        if (route) {
+            //route->getMetric();
+            nextAdd = route->getNextHopAsGeneric().toIPv4();
+
+            EV << "AODV Routing: next hop is " << nextAdd << endl;
+        }
+    }
+    else if (dynamic_cast<GPSR *>(this->getParentModule()->getSubmodule("gpsr"))) {
+        GPSR *gpsr = check_and_cast<GPSR *>(this->getParentModule()->getSubmodule("gpsr"));
+
+        cPacket *dummyPkt = new cPacket("dummy");
+        L3Address nextHop = gpsr->findNextHop(datagram, udpbb->getDestAddr());
+        if (!nextHop.isUnspecified()) {
+            nextAdd = nextHop.toIPv4();
+
+            EV << "GPSR Routing: next hop is " << nextAdd << endl;
+        }
+        else {
+            EV << "GPSR Routing: NO ROUTE to " << udpbb->getDestAddr() << endl;
+        }
+
+        /*IRoute *route = routingTable->findBestMatchingRoute(udpbb->getDestAddr());
+        if (route) {
+            //route->getMetric();
+
+            if (route->getNextHopAsGeneric().toIPv4() != IPv4Address::UNSPECIFIED_ADDRESS) {
+                nextAdd = route->getNextHopAsGeneric().toIPv4();
+
+                EV << "GPSR Routing: next hop is " << nextAdd << endl;
+            }
+            else {
+                EV << "GPSR Routing: no next hop" << endl;
+            }
+        }
+        else {
+            EV << "GPSR Routing: NO ROUTE to " << udpbb->getDestAddr() << endl;
+        }*/
+    }
+    else if (dynamic_cast<dymo::DYMO *>(this->getParentModule()->getSubmodule("dymo"))) {
+        //AODVRouting *aodv = check_and_cast<AODVRouting *>(this->getParentModule()->getSubmodule("aodv"));
+        IRoute *route = routingTable->findBestMatchingRoute(udpbb->getDestAddr());
+
+        if (route) {
+            //route->getMetric();
+            nextAdd = route->getNextHopAsGeneric().toIPv4();
+
+            EV << "DYMO Routing: next hop is " << nextAdd << endl;
+        }
+        else {
+            EV << "DYMO Routing: NO ROUTE to " << udpbb->getDestAddr() << endl;
+        }
+    }
     return nextAdd;
 }
 
@@ -529,7 +593,14 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
 }
 
 void UDPStatisticsApp::fillNextInfo(struct nodeinfo &info) {
-    //TODO
+    IPv4Address nextAdd = getNextHopAddress();
+
+    if (nextAdd != IPv4Address::UNSPECIFIED_ADDRESS) {
+        if (neighbourood.count(nextAdd) != 0) {
+            //struct nodeinfo *act = &(neighbourood[nextAdd].nodeInf);
+            info = neighbourood[nextAdd].nodeInf;
+        }
+    }
 }
 
 

@@ -37,6 +37,8 @@ void UDPBasicBurstExt::initialize(int stage)
     else if (stage == INITSTAGE_LAST) {
         myAddr = L3AddressResolver().resolve(this->getParentModule()->getFullPath().c_str());
         EV << "My address is: " << myAddr << std::endl;
+
+        WATCH(actualDestAddr);
     }
 }
 
@@ -54,23 +56,35 @@ L3Address UDPBasicBurstExt::chooseDestAddr()
 }
 */
 
+L3Address UDPBasicBurstExt::getDestAddr(void) {
+    return actualDestAddr;
+}
+
 L3Address UDPBasicBurstExt::chooseDestAddr()
 {
-    if (destAddresses.size() == 1)
-        return destAddresses[0];
+    if (destAddresses.size() == 1){
+        actualDestAddr = destAddresses[0];
+        //return destAddresses[0];
+    }
+    else {
 
-    int k = 0;
+        int k = 0;
 
-    for (int i = 0; i < 10; i++) {
-        k = getRNG(destAddrRNG)->intRand(destAddresses.size());
+        for (int i = 0; i < 10; i++) {
+            k = getRNG(destAddrRNG)->intRand(destAddresses.size());
 
-        if (myAddr != destAddresses[k])
-            break;
+            if (myAddr != destAddresses[k])
+                break;
+        }
+
+        EV << myAddr << " --> Generating burst for " << destAddresses[k] << " - " << k << std::endl;
+
+        actualDestAddr = destAddresses[k];
+
+        //return destAddresses[k];
     }
 
-    EV << myAddr << " --> Generating burst for " << destAddresses[k] << " - " << k << std::endl;
-
-    return destAddresses[k];
+    return actualDestAddr;
 }
 
 cPacket *UDPBasicBurstExt::createPacket()
