@@ -22,6 +22,8 @@ simple UDPStatisticsApp extends UDPBasicBurst
     parameters:
         int pysicalDataHistorySize = default(5);
         int maxListSizeVariances = default(20);
+        double statTime @unit(s) = default(2s);
+        double startStatTime @unit(s) = default(30s);
         
         @class(UDPStatisticsApp);
 }

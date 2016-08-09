@@ -76,11 +76,11 @@ public:
                     " VelLv: " << n.nodeInf.velLengthVariance << " [" << n.nodeInf.meanVelLengthVarianceNeighbourood << "]" <<
                     " MacQAbs: " << n.nodeInf.queueMacSizeAbs << " [" << n.nodeInf.meanQueueMacSizeAbsNeighbourood << "]" <<
                     " MacQPerc: " << n.nodeInf.queueMacSizePerc << " [" << n.nodeInf.meanQueueMacSizePercNeighbourood << "]" <<
-                    " ThrSec: " << n.nodeInf.througputMeanSecWindow << "|" << n.nodeInf.througputVarSecWindow << " [" << n.nodeInf.meanThrougputMeanSecWindowNeighbourood << "|" << n.nodeInf.meanThrougputVarSecWindowNeighbourood << "]" <<
+                    " ThrSec: " << n.nodeInf.througputMeanSecWindow << "|" << n.nodeInf.througputVarSecWindow << "|" << n.nodeInf.througputMeanTrendSecWindow << " [" << n.nodeInf.meanThrougputMeanSecWindowNeighbourood << "|" << n.nodeInf.meanThrougputVarSecWindowNeighbourood << "|" << n.nodeInf.meanThrougputMeanTrendSecWindowNeighbourood << "]" <<
                     " ThrNum: " << n.nodeInf.througputMeanNumWindow << "|" << n.nodeInf.througputVarNumWindow << " [" << n.nodeInf.meanThrougputMeanNumWindowNeighbourood << "|" << n.nodeInf.meanThrougputVarNumWindowNeighbourood << "]" <<
-                    " DelaySec: " << n.nodeInf.delayMeanSecWindow << "|" << n.nodeInf.delayVarSecWindow << " [" << n.nodeInf.meanDelayMeanSecWindowNeighbourood << "|" << n.nodeInf.meanDelayVarSecWindowNeighbourood << "]" <<
+                    " DelaySec: " << n.nodeInf.delayMeanSecWindow << "|" << n.nodeInf.delayVarSecWindow << "|" << n.nodeInf.delayMeanTrendSecWindow << " [" << n.nodeInf.meanDelayMeanSecWindowNeighbourood << "|" << n.nodeInf.meanDelayVarSecWindowNeighbourood << "|" << n.nodeInf.meanDelayMeanTrendSecWindowNeighbourood << "]" <<
                     " DelayNum: " << n.nodeInf.delayMeanNumWindow << "|" << n.nodeInf.delayVarNumWindow << " [" << n.nodeInf.meanDelayMeanNumWindowNeighbourood << "|" << n.nodeInf.meanDelayVarNumWindowNeighbourood << "]" <<
-                    " PDRSec: " << n.nodeInf.pdrSecWindow << " [" << n.nodeInf.meanPdrSecWindowNeighbourood << "]" <<
+                    " PDRSec: " << n.nodeInf.pdrSecWindow << "|" << n.nodeInf.pdrTrendSecWindow << " [" << n.nodeInf.meanPdrSecWindowNeighbourood << "|" << n.nodeInf.meanPdrTrendSecWindowNeighbourood << "]" <<
                     " PDRNum: " << n.nodeInf.pdrNumWindow << " [" << n.nodeInf.meanPdrNumWindowNeighbourood << "]" <<
                     "";
 
@@ -90,11 +90,15 @@ public:
 
 protected:
     cMessage *autoMsg = nullptr;
+    cMessage *statMsg = nullptr;
 
 private:
   L3Address myAddr;
   int myAppAddr;
   std::map<L3Address, neigh_t> neighbourood;
+
+  struct nodeinfo myLastInfo;
+  bool firstInfoUpdate = true;
 
   // for variances
   std::list<double> myLastVelLength;
@@ -104,6 +108,8 @@ private:
   //parameters
   int pysicalDataHistorySize;
   int maxListSizeVariances;
+  double statTime;
+  double startStatTime;
 
   IMobility *mob;
   ieee80211::DcfUpperMacExt *dcfMac;
@@ -116,6 +122,7 @@ protected:
   virtual void finish() override;
 
   virtual void handle100msAutoMsg(void);
+  virtual void handleStatAutoMsg(void);
   virtual void updateNeighList(void);
 
   virtual void processStart();
@@ -147,6 +154,8 @@ protected:
 
   virtual void updateMyInfoVector(struct nodeinfo *info);
   virtual void setVariancesMeans(struct nodeinfo *info);
+
+  virtual void makeStat(void);
 
 private:
   void updateForce(void);

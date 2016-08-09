@@ -88,6 +88,8 @@ struct nodeinfo
     double meanThrougputVarSecWindowNeighbourood;
     double meanThrougputMeanNumWindowNeighbourood;
     double meanThrougputVarNumWindowNeighbourood;
+    double througputMeanTrendSecWindow;
+    double meanThrougputMeanTrendSecWindowNeighbourood;
     
     double delayMeanSecWindow;
     double delayVarSecWindow;
@@ -96,12 +98,16 @@ struct nodeinfo
     double meanDelayMeanSecWindowNeighbourood;
     double meanDelayVarSecWindowNeighbourood;
     double meanDelayMeanNumWindowNeighbourood;
-    double meanDelayVarNumWindowNeighbourood;    
+    double meanDelayVarNumWindowNeighbourood; 
+    double delayMeanTrendSecWindow;
+    double meanDelayMeanTrendSecWindowNeighbourood;   
     
     double pdrSecWindow;
     double pdrNumWindow;
     double meanPdrSecWindowNeighbourood;
     double meanPdrNumWindowNeighbourood;
+    double pdrTrendSecWindow;
+    double meanPdrTrendSecWindowNeighbourood;
     
     //NextHop related info    
     double nextHopDistance;

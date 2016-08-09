@@ -37,6 +37,7 @@ Define_Module(UDPStatisticsApp);
 
 UDPStatisticsApp::~UDPStatisticsApp() {
     cancelAndDelete(autoMsg);
+    cancelAndDelete(statMsg);
 }
 
 void UDPStatisticsApp::initialize(int stage)
@@ -44,15 +45,22 @@ void UDPStatisticsApp::initialize(int stage)
     UDPBasicBurst::initialize(stage);
 
     if (stage == INITSTAGE_LOCAL) {
-        autoMsg = new cMessage("updateForce");
-        scheduleAt(simTime() + dblrand(), autoMsg);
 
         pysicalDataHistorySize = par("pysicalDataHistorySize");
         maxListSizeVariances = par("maxListSizeVariances");
+        statTime = par("statTime");
+        startStatTime = par("startStatTime");
 
         mob = check_and_cast<IMobility *>(getParentModule()->getSubmodule("mobility"));
         dcfMac = check_and_cast<ieee80211::DcfUpperMacExt *>(getParentModule()->getSubmodule("wlan", 0)->getSubmodule("mac")->getSubmodule("upperMac"));
         udpbb = check_and_cast<UDPBasicBurstExt *>(getParentModule()->getSubmodule("udpApp", 1));
+
+
+        autoMsg = new cMessage("updateForce");
+        scheduleAt(simTime() + dblrand(), autoMsg);
+
+        statMsg = new cMessage("statMessage");
+        //scheduleAt(simTime() + statTime, statMsg);
 
         WATCH_MAP(neighbourood);
         WATCH_LIST(myLastVelLength);
@@ -78,9 +86,31 @@ void UDPStatisticsApp::handleMessage(cMessage *msg)
         handle100msAutoMsg();
         scheduleAt(simTime() + 0.1, autoMsg);
     }
+    else if ((msg->isSelfMessage()) && (msg == statMsg)) {
+        handleStatAutoMsg();
+        scheduleAt(simTime() + statTime, statMsg);
+    }
     else {
         UDPBasicBurst::handleMessage(msg);
     }
+}
+
+void UDPStatisticsApp::handleStatAutoMsg(void) {
+
+    if (firstInfoUpdate) {
+        fillMyInfo(myLastInfo);
+        setVariancesMeans(&myLastInfo);
+        calculateAllMeanNeighbourood(myLastInfo);
+
+        firstInfoUpdate = false;
+    }
+
+    makeStat();
+
+    //set last info
+    fillMyInfo(myLastInfo);
+    setVariancesMeans(&myLastInfo);
+    calculateAllMeanNeighbourood(myLastInfo);
 }
 
 void UDPStatisticsApp::handle100msAutoMsg(void) {
@@ -233,6 +263,14 @@ cPacket *UDPStatisticsApp::createPacket()
 
     struct nodeinfo myInfo, nextInfo;
 
+    if (firstInfoUpdate) {
+        fillMyInfo(myLastInfo);
+        setVariancesMeans(&myLastInfo);
+        calculateAllMeanNeighbourood(myLastInfo);
+
+        firstInfoUpdate = false;
+    }
+
     fillMyInfo(myInfo);
     updateMyInfoVector(&myInfo);
     setVariancesMeans(&myInfo);
@@ -249,6 +287,10 @@ cPacket *UDPStatisticsApp::createPacket()
         neigh_t *actual = &(it->second);
         payload->setNeighbours(ii++, actual->nodeInf);
     }
+
+    if (simTime() > startStatTime)
+        makeStat();
+    myLastInfo = myInfo;
 
     return payload;
 }
@@ -544,11 +586,11 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
     double sumSnr, sumPow, sumPer, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp, sumL3Metric;
     double sumVelT, sumVelTMean, sumVelTVar, sumVelL, sumVelLMean, sumVelLVar, sumMacQAbs, sumMacQPerc;
     double sumThMSec, sumThVSec, sumThMNum, sumThVNum, sumDelMSec, sumDelVSec, sumDelMNum, sumDelVNum, sumPdrSec, sumPdrNum;
-    double sumDegreeVar;
+    double sumDegreeVar, sumThSTrend, sumDelSTrend, sumPdrSTrend;
     sumSnr = sumPow = sumPer = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = sumL3Metric = 0.0;
     sumVelT = sumVelTMean = sumVelTVar = sumVelL = sumVelLMean = sumVelLVar = sumMacQAbs = sumMacQPerc = 0.0;
     sumThMSec = sumThVSec = sumThMNum = sumThVNum = sumDelMSec = sumDelVSec = sumDelMNum = sumDelVNum = sumPdrSec = sumPdrNum = 0.0;
-    sumDegreeVar = 0.0;
+    sumDegreeVar = sumThSTrend = sumDelSTrend = sumPdrSTrend = 0.0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *act = &(it->second);
@@ -581,6 +623,9 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         sumPdrSec += act->nodeInf.pdrSecWindow;
         sumPdrNum += act->nodeInf.pdrNumWindow;
         sumDegreeVar += act->nodeInf.nodeDegreeVariance;
+        sumThSTrend += act->nodeInf.througputMeanTrendSecWindow;
+        sumDelSTrend += act->nodeInf.delayMeanTrendSecWindow;
+        sumPdrSTrend += act->nodeInf.pdrTrendSecWindow;
     }
 
     if (count == 0) {
@@ -613,6 +658,9 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanPdrNumWindowNeighbourood = 0.0;
         info.meanPdrSecWindowNeighbourood = 0.0;
         info.meanNodeDegreeVarianceNeighbourood = 0.0;
+        info.meanThrougputMeanTrendSecWindowNeighbourood = 0.0;
+        info.meanDelayMeanTrendSecWindowNeighbourood = 0.0;
+        info.meanPdrTrendSecWindowNeighbourood = 0.0;
     }
     else {
         info.meanNodeDegreeNeighbourood = sumDeg / count;
@@ -644,6 +692,9 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanPdrNumWindowNeighbourood = sumPdrNum / count;
         info.meanPdrSecWindowNeighbourood = sumPdrSec / count;
         info.meanNodeDegreeVarianceNeighbourood = sumDegreeVar / count;
+        info.meanThrougputMeanTrendSecWindowNeighbourood = sumThSTrend / count;
+        info.meanDelayMeanTrendSecWindowNeighbourood = sumDelSTrend / count;
+        info.meanPdrTrendSecWindowNeighbourood = sumPdrSTrend / count;
     }
 }
 
@@ -673,14 +724,17 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
     info.througputVarSecWindow = udpbb->getThroughputVarSec();
     info.througputMeanNumWindow = udpbb->getThroughputMeanNum();
     info.througputVarNumWindow = udpbb->getThroughputVarNum();
+    info.througputMeanTrendSecWindow = info.througputMeanSecWindow - myLastInfo.througputMeanSecWindow;
 
     info.delayMeanSecWindow = udpbb->getDelayMeanSec();
     info.delayVarSecWindow = udpbb->getDelayVarSec();
     info.delayMeanNumWindow = udpbb->getDelayMeanNum();
     info.delayVarNumWindow = udpbb->getDelayVarNum();
+    info.delayMeanTrendSecWindow = info.delayMeanSecWindow - myLastInfo.delayMeanTrendSecWindow;
 
     info.pdrSecWindow = udpbb->getPDRSec();
     info.pdrNumWindow = udpbb->getPDRNum();
+    info.pdrTrendSecWindow = info.pdrSecWindow - myLastInfo.pdrSecWindow;
 
     //NextHop related info
     info.nextHopDistance = getDistanceNextHop();
@@ -697,6 +751,10 @@ void UDPStatisticsApp::fillNextInfo(struct nodeinfo &info) {
             info = neighbourood[nextAdd].nodeInf;
         }
     }
+}
+
+void UDPStatisticsApp::makeStat(void) {
+
 }
 
 
