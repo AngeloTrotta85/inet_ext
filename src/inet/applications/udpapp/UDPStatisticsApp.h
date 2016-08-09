@@ -76,6 +76,12 @@ public:
                     " VelLv: " << n.nodeInf.velLengthVariance << " [" << n.nodeInf.meanVelLengthVarianceNeighbourood << "]" <<
                     " MacQAbs: " << n.nodeInf.queueMacSizeAbs << " [" << n.nodeInf.meanQueueMacSizeAbsNeighbourood << "]" <<
                     " MacQPerc: " << n.nodeInf.queueMacSizePerc << " [" << n.nodeInf.meanQueueMacSizePercNeighbourood << "]" <<
+                    " ThrSec: " << n.nodeInf.througputMeanSecWindow << "|" << n.nodeInf.througputVarSecWindow << " [" << n.nodeInf.meanThrougputMeanSecWindowNeighbourood << "|" << n.nodeInf.meanThrougputVarSecWindowNeighbourood << "]" <<
+                    " ThrNum: " << n.nodeInf.througputMeanNumWindow << "|" << n.nodeInf.througputVarNumWindow << " [" << n.nodeInf.meanThrougputMeanNumWindowNeighbourood << "|" << n.nodeInf.meanThrougputVarNumWindowNeighbourood << "]" <<
+                    " DelaySec: " << n.nodeInf.delayMeanSecWindow << "|" << n.nodeInf.delayVarSecWindow << " [" << n.nodeInf.meanDelayMeanSecWindowNeighbourood << "|" << n.nodeInf.meanDelayVarSecWindowNeighbourood << "]" <<
+                    " DelayNum: " << n.nodeInf.delayMeanNumWindow << "|" << n.nodeInf.delayVarNumWindow << " [" << n.nodeInf.meanDelayMeanNumWindowNeighbourood << "|" << n.nodeInf.meanDelayVarNumWindowNeighbourood << "]" <<
+                    " PDRSec: " << n.nodeInf.pdrSecWindow << " [" << n.nodeInf.meanPdrSecWindowNeighbourood << "]" <<
+                    " PDRNum: " << n.nodeInf.pdrNumWindow << " [" << n.nodeInf.meanPdrNumWindowNeighbourood << "]" <<
                     "";
 
             return os;

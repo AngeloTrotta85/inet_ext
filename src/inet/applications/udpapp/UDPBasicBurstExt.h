@@ -26,7 +26,8 @@
 
 #include "inet/applications/udpapp/UDPBasicBurst.h"
 
-#include "inet/applications/base/ApplicationPacket_m.h"
+#include "inet/applications/base/ApplicationPacketBurst_m.h"
+
 namespace inet {
 
 /**
@@ -34,6 +35,28 @@ namespace inet {
  */
 class INET_API UDPBasicBurstExt : public UDPBasicBurst
 {
+public:
+    typedef struct transmissionStatus{
+        simtime_t simtimeSent;
+        simtime_t simtimeReceivedAck;
+        int pktSizeByte;
+        int pktCode;
+        bool acknowledged;
+
+        friend std::ostream& operator << (std::ostream& os, transmissionStatus& n) {
+            //os << "Addr: " << n.addr << " Degree: " << n.degree;// << " NeighList: " << neigh;
+
+            os <<
+                    "[" << n.pktCode << "]" <<
+                    " Acknowledged?: " << (n.acknowledged ? "OK" : "NO") <<
+                    " Sent at: " << n.simtimeSent <<
+                    " Received at: " << n.simtimeReceivedAck <<
+                    " Pkt Size: " << n.pktSizeByte <<
+                    "";
+
+            return os;
+        }
+    } transmissionStatus_t;
 
   protected:
 
@@ -44,9 +67,17 @@ class INET_API UDPBasicBurstExt : public UDPBasicBurst
     // chooses random destination address
     virtual L3Address chooseDestAddr();
     virtual cPacket *createPacket();
-    virtual cPacket *createAckPacket(int index);
-    virtual void handleIncomingPacket(ApplicationPacket *msg);
-    virtual void handleIncomingAck(ApplicationPacket *msg);
+    virtual cPacket *createAckPacket(ApplicationPacketBurst *msg2ack, int index);
+    virtual void handleIncomingPacket(ApplicationPacketBurst *msg);
+    virtual void handleIncomingAck(ApplicationPacketBurst *msg);
+
+    virtual void addToMapSec(transmissionStatus_t *stat);
+    virtual void addToMapNum(transmissionStatus_t *stat);
+
+
+    virtual double getMean(std::list<double> *l);
+    virtual double getVar(std::list<double> *l);
+    void getMeanVar_ThrougputDelayPDR(std::list<transmissionStatus_t> *list, double &throughput_val, double &throughput_var, double &delay_val, double &delay_var, double &pdr_val);
 
   public:
     UDPBasicBurstExt() {};
@@ -54,10 +85,30 @@ class INET_API UDPBasicBurstExt : public UDPBasicBurst
 
     virtual L3Address getDestAddr(void);
 
+    virtual double getThroughputMeanSec(void);
+    virtual double getThroughputVarSec(void);
+    virtual double getThroughputMeanNum(void);
+    virtual double getThroughputVarNum(void);
+
+    virtual double getDelayMeanSec(void);
+    virtual double getDelayVarSec(void);
+    virtual double getDelayMeanNum(void);
+    virtual double getDelayVarNum(void);
+
+    virtual double getPDRSec(void);
+    virtual double getPDRNum(void);
+
   private:
   //  int destAddrIdx;
     L3Address myAddr;
     L3Address actualDestAddr;
+
+    std::list<transmissionStatus_t> transmissionsStatusSec;
+    std::list<transmissionStatus_t> transmissionsStatusNum;
+
+    //parameters
+    int maxStatSizeNum;
+    double maxStatSizeSec;
 };
 
 } // namespace inet

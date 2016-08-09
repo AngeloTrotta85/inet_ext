@@ -82,6 +82,30 @@ struct nodeinfo
     // next-hop info
     double nextHopApproaching;
     double meanNextHopApproachingNeighbourood;
+    
+    // App info
+    double througputMeanSecWindow;
+    double througputVarSecWindow;
+    double througputMeanNumWindow;
+    double througputVarNumWindow;
+    double meanThrougputMeanSecWindowNeighbourood;
+    double meanThrougputVarSecWindowNeighbourood;
+    double meanThrougputMeanNumWindowNeighbourood;
+    double meanThrougputVarNumWindowNeighbourood;
+    
+    double delayMeanSecWindow;
+    double delayVarSecWindow;
+    double delayMeanNumWindow;
+    double delayVarNumWindow;   
+    double meanDelayMeanSecWindowNeighbourood;
+    double meanDelayVarSecWindowNeighbourood;
+    double meanDelayMeanNumWindowNeighbourood;
+    double meanDelayVarNumWindowNeighbourood;    
+    
+    double pdrSecWindow;
+    double pdrNumWindow;
+    double meanPdrSecWindowNeighbourood;
+    double meanPdrNumWindowNeighbourood;
 };
 
 packet ApplicationPacketExt {

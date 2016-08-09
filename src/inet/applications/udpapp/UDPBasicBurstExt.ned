@@ -104,6 +104,9 @@ import inet.applications.contract.IUDPApp;
 simple UDPBasicBurstExt extends UDPBasicBurst
 {
     parameters:
+        double maxStatSizeSec @unit(s) = default(5s);
+        int maxStatSizeNum = default(10);
+        
         @class("UDPBasicBurstExt");
         @signal[sentPk](type=cPacket);
         @signal[rcvdPk](type=cPacket);

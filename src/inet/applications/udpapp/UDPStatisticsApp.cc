@@ -535,12 +535,12 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
     double count = neighbourood.size();
 
     Coord sumVel = Coord::ZERO;
-    double sumSnr, sumPow, sumPer, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp;
+    double sumSnr, sumPow, sumPer, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp, sumL3Metric;
     double sumVelT, sumVelTMean, sumVelTVar, sumVelL, sumVelLMean, sumVelLVar, sumMacQAbs, sumMacQPerc;
-    double sumL3Metric;
-    sumSnr = sumPow = sumPer = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = 0.0;
+    double sumThMSec, sumThVSec, sumThMNum, sumThVNum, sumDelMSec, sumDelVSec, sumDelMNum, sumDelVNum, sumPdrSec, sumPdrNum;
+    sumSnr = sumPow = sumPer = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = sumL3Metric = 0.0;
     sumVelT = sumVelTMean = sumVelTVar = sumVelL = sumVelLMean = sumVelLVar = sumMacQAbs = sumMacQPerc = 0.0;
-    sumL3Metric = 0.0;
+    sumThMSec = sumThVSec = sumThMNum = sumThVNum = sumDelMSec = sumDelVSec = sumDelMNum = sumDelVNum = sumPdrSec = sumPdrNum = 0.0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *act = &(it->second);
@@ -562,6 +562,16 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         sumMacQAbs += act->nodeInf.queueMacSizeAbs;
         sumMacQPerc += act->nodeInf.queueMacSizePerc;
         sumL3Metric += act->nodeInf.l3Metric;
+        sumThMSec += act->nodeInf.througputMeanSecWindow;
+        sumThVSec += act->nodeInf.througputVarSecWindow;
+        sumThMNum += act->nodeInf.througputMeanNumWindow;
+        sumThVNum += act->nodeInf.througputVarNumWindow;
+        sumDelMSec += act->nodeInf.delayMeanSecWindow;
+        sumDelVSec += act->nodeInf.delayVarSecWindow;
+        sumDelMNum += act->nodeInf.delayMeanNumWindow;
+        sumDelVNum += act->nodeInf.delayVarNumWindow;
+        sumPdrSec += act->nodeInf.pdrSecWindow;
+        sumPdrNum += act->nodeInf.pdrNumWindow;
     }
 
     if (count == 0) {
@@ -583,6 +593,16 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanQueueMacSizeAbsNeighbourood = 0.0;
         info.meanQueueMacSizePercNeighbourood = 0.0;
         info.meanL3MetricNeighbourood = 0.0;
+        info.meanThrougputMeanNumWindowNeighbourood = 0.0;
+        info.meanThrougputVarNumWindowNeighbourood = 0.0;
+        info.meanThrougputMeanSecWindowNeighbourood = 0.0;
+        info.meanThrougputVarSecWindowNeighbourood = 0.0;
+        info.meanDelayMeanNumWindowNeighbourood = 0.0;
+        info.meanDelayVarNumWindowNeighbourood = 0.0;
+        info.meanDelayMeanSecWindowNeighbourood = 0.0;
+        info.meanDelayVarSecWindowNeighbourood = 0.0;
+        info.meanPdrNumWindowNeighbourood = 0.0;
+        info.meanPdrSecWindowNeighbourood = 0.0;
     }
     else {
         info.meanNodeDegreeNeighbourood = sumDeg / count;
@@ -603,6 +623,16 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanQueueMacSizeAbsNeighbourood = sumMacQAbs / count;
         info.meanQueueMacSizePercNeighbourood = sumMacQPerc / count;
         info.meanL3MetricNeighbourood = sumL3Metric / count;
+        info.meanThrougputMeanNumWindowNeighbourood = sumThMNum / count;
+        info.meanThrougputVarNumWindowNeighbourood = sumThVNum / count;
+        info.meanThrougputMeanSecWindowNeighbourood = sumThMSec / count;
+        info.meanThrougputVarSecWindowNeighbourood = sumThVSec / count;
+        info.meanDelayMeanNumWindowNeighbourood = sumDelMNum / count;
+        info.meanDelayVarNumWindowNeighbourood = sumDelVNum / count;
+        info.meanDelayMeanSecWindowNeighbourood = sumDelMSec / count;
+        info.meanDelayVarSecWindowNeighbourood = sumDelVSec / count;
+        info.meanPdrNumWindowNeighbourood = sumPdrNum / count;
+        info.meanPdrSecWindowNeighbourood = sumPdrSec / count;
     }
 }
 
@@ -628,6 +658,20 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
 
     //L3 metric
     info.l3Metric = getL3Metric();
+
+    //App info
+    info.througputMeanSecWindow = udpbb->getThroughputMeanSec();
+    info.througputVarSecWindow = udpbb->getThroughputVarSec();
+    info.througputMeanNumWindow = udpbb->getThroughputMeanNum();
+    info.througputVarNumWindow = udpbb->getThroughputVarNum();
+
+    info.delayMeanSecWindow = udpbb->getDelayMeanSec();
+    info.delayVarSecWindow = udpbb->getDelayVarSec();
+    info.delayMeanNumWindow = udpbb->getDelayMeanNum();
+    info.delayVarNumWindow = udpbb->getDelayVarNum();
+
+    info.pdrSecWindow = udpbb->getPDRSec();
+    info.pdrNumWindow = udpbb->getPDRNum();
 
     //calculateAllMeanNeighbourood(info);
 }

@@ -57,11 +57,13 @@ OBJS = \
     $O/inet/networklayer/ipv4/IPv4Ext.o \
     $O/inet/physicallayer/ieee80211/packetlevel/Ieee80211ScalarReceiverExt.o \
     $O/inet/transportlayer/udp/UDPExt.o \
+    $O/inet/applications/base/ApplicationPacketBurst_m.o \
     $O/inet/applications/base/ApplicationPacketExt_m.o \
     $O/inet/transportlayer/contract/udp/UDPDataIndicationExt_m.o
 
 # Message files
 MSGFILES = \
+    inet/applications/base/ApplicationPacketBurst.msg \
     inet/applications/base/ApplicationPacketExt.msg \
     inet/transportlayer/contract/udp/UDPDataIndicationExt.msg
 
@@ -180,6 +182,8 @@ depend:
 	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES) $(SM_CC_FILES)  ./*.cc inet/*.cc inet/applications/*.cc inet/applications/base/*.cc inet/applications/udpapp/*.cc inet/linklayer/*.cc inet/linklayer/common/*.cc inet/linklayer/ieee80211/*.cc inet/linklayer/ieee80211/mac/*.cc inet/linklayer/ieee80211/mgmt/*.cc inet/networklayer/*.cc inet/networklayer/contract/*.cc inet/networklayer/contract/ipv4/*.cc inet/networklayer/ipv4/*.cc inet/physicallayer/*.cc inet/physicallayer/ieee80211/*.cc inet/physicallayer/ieee80211/packetlevel/*.cc inet/transportlayer/*.cc inet/transportlayer/contract/*.cc inet/transportlayer/contract/udp/*.cc inet/transportlayer/udp/*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
+$O/inet/applications/base/ApplicationPacketBurst_m.o: inet/applications/base/ApplicationPacketBurst_m.cc \
+	inet/applications/base/ApplicationPacketBurst_m.h
 $O/inet/applications/base/ApplicationPacketExt_m.o: inet/applications/base/ApplicationPacketExt_m.cc \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
@@ -196,7 +200,6 @@ $O/inet/applications/base/ApplicationPacketExt_m.o: inet/applications/base/Appli
 	inet/applications/base/ApplicationPacketExt_m.h
 $O/inet/applications/udpapp/UDPBasicBurstExt.o: inet/applications/udpapp/UDPBasicBurstExt.cc \
 	$(INET_PROJ)/src/inet/applications/base/ApplicationBase.h \
-	$(INET_PROJ)/src/inet/applications/base/ApplicationPacket_m.h \
 	$(INET_PROJ)/src/inet/applications/udpapp/UDPBasicBurst.h \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
@@ -222,10 +225,10 @@ $O/inet/applications/udpapp/UDPBasicBurstExt.o: inet/applications/udpapp/UDPBasi
 	$(INET_PROJ)/src/inet/transportlayer/contract/udp/UDPControlInfo.h \
 	$(INET_PROJ)/src/inet/transportlayer/contract/udp/UDPControlInfo_m.h \
 	$(INET_PROJ)/src/inet/transportlayer/contract/udp/UDPSocket.h \
+	inet/applications/base/ApplicationPacketBurst_m.h \
 	inet/applications/udpapp/UDPBasicBurstExt.h
 $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStatisticsApp.cc \
 	$(INET_PROJ)/src/inet/applications/base/ApplicationBase.h \
-	$(INET_PROJ)/src/inet/applications/base/ApplicationPacket_m.h \
 	$(INET_PROJ)/src/inet/applications/udpapp/UDPBasicBurst.h \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
@@ -289,6 +292,7 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/transportlayer/contract/udp/UDPSocket.h \
 	$(INET_PROJ)/src/inet/transportlayer/udp/UDPPacket.h \
 	$(INET_PROJ)/src/inet/transportlayer/udp/UDPPacket_m.h \
+	inet/applications/base/ApplicationPacketBurst_m.h \
 	inet/applications/base/ApplicationPacketExt_m.h \
 	inet/applications/udpapp/UDPBasicBurstExt.h \
 	inet/applications/udpapp/UDPStatisticsApp.h \
