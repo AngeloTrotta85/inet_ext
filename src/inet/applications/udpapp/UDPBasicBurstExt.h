@@ -26,6 +26,7 @@
 
 #include "inet/applications/udpapp/UDPBasicBurst.h"
 
+#include "inet/applications/base/ApplicationPacket_m.h"
 namespace inet {
 
 /**
@@ -37,11 +38,15 @@ class INET_API UDPBasicBurstExt : public UDPBasicBurst
   protected:
 
     virtual int numInitStages() const override { return NUM_INIT_STAGES; }
+    virtual void handleMessageWhenUp(cMessage *msg) override;
     virtual void initialize(int stage) override;
 
     // chooses random destination address
     virtual L3Address chooseDestAddr();
     virtual cPacket *createPacket();
+    virtual cPacket *createAckPacket(int index);
+    virtual void handleIncomingPacket(ApplicationPacket *msg);
+    virtual void handleIncomingAck(ApplicationPacket *msg);
 
   public:
     UDPBasicBurstExt() {};

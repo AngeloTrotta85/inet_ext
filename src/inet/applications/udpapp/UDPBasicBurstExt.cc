@@ -22,6 +22,7 @@
 #include "inet/applications/base/ApplicationPacket_m.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
 
+#include "inet/transportlayer/contract/udp/UDPControlInfo_m.h"
 namespace inet {
 
 Define_Module(UDPBasicBurstExt);
@@ -87,6 +88,20 @@ L3Address UDPBasicBurstExt::chooseDestAddr()
     return actualDestAddr;
 }
 
+void UDPBasicBurstExt::handleMessageWhenUp(cMessage *msg)
+{
+    if (msg->getKind() == UDP_I_DATA) {
+        // process incoming packet
+        if (strncmp(msg->getName(), "UDPBasicAppExtData", strlen("UDPBasicAppExtData")) == 0) {
+            handleIncomingPacket(check_and_cast<ApplicationPacket *>(msg));
+        }
+        else if (strncmp(msg->getName(), "UDPBasicAppExtAck", strlen("UDPBasicAppExtAck")) == 0) {
+            handleIncomingAck(check_and_cast<ApplicationPacket *>(msg));
+        }
+    }
+    UDPBasicBurst::handleMessageWhenUp(msg);
+}
+
 cPacket *UDPBasicBurstExt::createPacket()
 {
     char msgName[32];
@@ -101,6 +116,32 @@ cPacket *UDPBasicBurstExt::createPacket()
     return payload;
 }
 
+cPacket *UDPBasicBurstExt::createAckPacket(int index)
+{
+    char msgName[32];
+    sprintf(msgName, "UDPBasicAppExtAck-%d", index);
+    ApplicationPacket *payload = new ApplicationPacket(msgName);
+    payload->setByteLength(32);
+
+    return payload;
+}
+
+void UDPBasicBurstExt::handleIncomingPacket(ApplicationPacket *msg) {
+    int counterRcv;
+    sscanf(msg->getName(), "UDPBasicAppExtData-%d", &counterRcv);
+
+    UDPDataIndication *di = check_and_cast<UDPDataIndication *>(msg->getControlInfo());
+
+    cPacket *payload = createAckPacket(counterRcv);
+    payload->setTimestamp();
+    //emit(sentPkSignal, payload);
+
+    socket.sendTo(payload, di->getSrcAddr(), di->getSrcPort());
+}
+
+void UDPBasicBurstExt::handleIncomingAck(ApplicationPacket *msg) {
+
+}
 
 } // namespace inet
 

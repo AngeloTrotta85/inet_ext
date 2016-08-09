@@ -225,6 +225,7 @@ $O/inet/applications/udpapp/UDPBasicBurstExt.o: inet/applications/udpapp/UDPBasi
 	inet/applications/udpapp/UDPBasicBurstExt.h
 $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStatisticsApp.cc \
 	$(INET_PROJ)/src/inet/applications/base/ApplicationBase.h \
+	$(INET_PROJ)/src/inet/applications/base/ApplicationPacket_m.h \
 	$(INET_PROJ)/src/inet/applications/udpapp/UDPBasicBurst.h \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
@@ -249,6 +250,7 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/linklayer/ieee80211/mac/IFrameExchange.h \
 	$(INET_PROJ)/src/inet/linklayer/ieee80211/mac/IUpperMac.h \
 	$(INET_PROJ)/src/inet/mobility/contract/IMobility.h \
+	$(INET_PROJ)/src/inet/networklayer/common/IPProtocolId_m.h \
 	$(INET_PROJ)/src/inet/networklayer/common/InterfaceEntry.h \
 	$(INET_PROJ)/src/inet/networklayer/common/InterfaceToken.h \
 	$(INET_PROJ)/src/inet/networklayer/common/L3Address.h \
@@ -264,6 +266,8 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/networklayer/contract/IRoutingTable.h \
 	$(INET_PROJ)/src/inet/networklayer/contract/ipv4/IPv4Address.h \
 	$(INET_PROJ)/src/inet/networklayer/contract/ipv6/IPv6Address.h \
+	$(INET_PROJ)/src/inet/networklayer/ipv4/IPv4Datagram.h \
+	$(INET_PROJ)/src/inet/networklayer/ipv4/IPv4Datagram_m.h \
 	$(INET_PROJ)/src/inet/physicallayer/base/packetlevel/PhysicalLayerDefs.h \
 	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/IModulation.h \
 	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/IPrintableObject.h \

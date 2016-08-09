@@ -130,6 +130,8 @@ protected:
   virtual double getDistanceNextHop(void);
   virtual IPv4Address getNextHopAddress(void);
 
+  virtual double getL3Metric(void);
+
   virtual double calcMeanNeighDistance(void);
   virtual double calcApproachingNeigh(void);
   virtual double calcNextApproaching(void);

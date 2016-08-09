@@ -75,6 +75,9 @@ struct nodeinfo
     double queueMacSizePerc;
     double meanQueueMacSizePercNeighbourood;
     
+    // L3 metric
+    double l3Metric;
+    double meanL3MetricNeighbourood;
     
     // next-hop info
     double nextHopApproaching;

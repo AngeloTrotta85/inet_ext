@@ -29,6 +29,8 @@
 
 #include "inet/networklayer/contract/IRoutingTable.h"
 
+#include "inet/networklayer/ipv4/IPv4Datagram.h"
+
 namespace inet {
 
 Define_Module(UDPStatisticsApp);
@@ -268,8 +270,11 @@ IPv4Address UDPStatisticsApp::getNextHopAddress(void) {
     else if (dynamic_cast<GPSR *>(this->getParentModule()->getSubmodule("gpsr"))) {
         GPSR *gpsr = check_and_cast<GPSR *>(this->getParentModule()->getSubmodule("gpsr"));
 
-        cPacket *dummyPkt = new cPacket("dummy");
-        L3Address nextHop = gpsr->findNextHop(datagram, udpbb->getDestAddr());
+        IPv4Datagram *dummyPkt = new IPv4Datagram("dummy");
+        gpsr->setGpsrOptionOnNetworkDatagram(dummyPkt);
+        L3Address nextHop = gpsr->findNextHop(dummyPkt, udpbb->getDestAddr());
+        delete dummyPkt;
+
         if (!nextHop.isUnspecified()) {
             nextAdd = nextHop.toIPv4();
 
@@ -278,23 +283,6 @@ IPv4Address UDPStatisticsApp::getNextHopAddress(void) {
         else {
             EV << "GPSR Routing: NO ROUTE to " << udpbb->getDestAddr() << endl;
         }
-
-        /*IRoute *route = routingTable->findBestMatchingRoute(udpbb->getDestAddr());
-        if (route) {
-            //route->getMetric();
-
-            if (route->getNextHopAsGeneric().toIPv4() != IPv4Address::UNSPECIFIED_ADDRESS) {
-                nextAdd = route->getNextHopAsGeneric().toIPv4();
-
-                EV << "GPSR Routing: next hop is " << nextAdd << endl;
-            }
-            else {
-                EV << "GPSR Routing: no next hop" << endl;
-            }
-        }
-        else {
-            EV << "GPSR Routing: NO ROUTE to " << udpbb->getDestAddr() << endl;
-        }*/
     }
     else if (dynamic_cast<dymo::DYMO *>(this->getParentModule()->getSubmodule("dymo"))) {
         //AODVRouting *aodv = check_and_cast<AODVRouting *>(this->getParentModule()->getSubmodule("aodv"));
@@ -311,6 +299,50 @@ IPv4Address UDPStatisticsApp::getNextHopAddress(void) {
         }
     }
     return nextAdd;
+}
+
+double UDPStatisticsApp::getL3Metric(void) {
+    double ris = 0.0;
+    IRoutingTable *routingTable = dynamic_cast<IRoutingTable *>(this->getParentModule()->getSubmodule("routingTable"));
+
+    if (dynamic_cast<AODVRouting *>(this->getParentModule()->getSubmodule("aodv"))) {
+        IRoute *route = routingTable->findBestMatchingRoute(udpbb->getDestAddr());
+
+        if (route) {
+            ris = route->getMetric();
+            EV << "AODV Routing metric: " << ris << endl;
+        }
+        else {
+            EV << "AODV Routing metric: NO metric to " << udpbb->getDestAddr() << endl;
+        }
+    }
+    else if (dynamic_cast<GPSR *>(this->getParentModule()->getSubmodule("gpsr"))) {
+        GPSR *gpsr = check_and_cast<GPSR *>(this->getParentModule()->getSubmodule("gpsr"));
+
+        Coord destPos = gpsr->getNeighborPosition(udpbb->getDestAddr());
+
+        if (destPos != Coord::NIL) {
+            ris = destPos.distance(mob->getCurrentPosition());
+
+            EV << "GPSR Routing metric: " << ris << endl;
+        }
+        else {
+            EV << "GPSR Routing metric: NO metric to " << udpbb->getDestAddr() << endl;
+        }
+    }
+    else if (dynamic_cast<dymo::DYMO *>(this->getParentModule()->getSubmodule("dymo"))) {
+        IRoute *route = routingTable->findBestMatchingRoute(udpbb->getDestAddr());
+
+        if (route) {
+            ris = route->getMetric();
+
+            EV << "DYMO Routing metric: " << ris << endl;
+        }
+        else {
+            EV << "DYMO Routing metric: NO metric to " << udpbb->getDestAddr() << endl;
+        }
+    }
+    return ris;
 }
 
 double UDPStatisticsApp::getDistanceNextHop(void) {
@@ -505,8 +537,10 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
     Coord sumVel = Coord::ZERO;
     double sumSnr, sumPow, sumPer, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp;
     double sumVelT, sumVelTMean, sumVelTVar, sumVelL, sumVelLMean, sumVelLVar, sumMacQAbs, sumMacQPerc;
+    double sumL3Metric;
     sumSnr = sumPow = sumPer = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = 0.0;
     sumVelT = sumVelTMean = sumVelTVar = sumVelL = sumVelLMean = sumVelLVar = sumMacQAbs = sumMacQPerc = 0.0;
+    sumL3Metric = 0.0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *act = &(it->second);
@@ -527,6 +561,7 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         sumVelLVar += act->nodeInf.velLengthVariance;
         sumMacQAbs += act->nodeInf.queueMacSizeAbs;
         sumMacQPerc += act->nodeInf.queueMacSizePerc;
+        sumL3Metric += act->nodeInf.l3Metric;
     }
 
     if (count == 0) {
@@ -547,6 +582,7 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanVelLengthVarianceNeighbourood = 0.0;
         info.meanQueueMacSizeAbsNeighbourood = 0.0;
         info.meanQueueMacSizePercNeighbourood = 0.0;
+        info.meanL3MetricNeighbourood = 0.0;
     }
     else {
         info.meanNodeDegreeNeighbourood = sumDeg / count;
@@ -566,6 +602,7 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanVelLengthVarianceNeighbourood = sumVelLVar / count;
         info.meanQueueMacSizeAbsNeighbourood = sumMacQAbs / count;
         info.meanQueueMacSizePercNeighbourood = sumMacQPerc / count;
+        info.meanL3MetricNeighbourood = sumL3Metric / count;
     }
 }
 
@@ -588,6 +625,9 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
     //MAC
     info.queueMacSizeAbs = dcfMac->getQueueAbs();
     info.queueMacSizePerc = dcfMac->getQueuePerc();
+
+    //L3 metric
+    info.l3Metric = getL3Metric();
 
     //calculateAllMeanNeighbourood(info);
 }
