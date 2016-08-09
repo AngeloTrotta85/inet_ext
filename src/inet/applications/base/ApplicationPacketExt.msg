@@ -50,9 +50,6 @@ struct nodeinfo
     double meanVelLengthVarianceNeighbourood;
     double meanVelLengthMeanNeighbourood;
     
-    double nextHopDistance;
-    double meanNextHopDistanceNeighbourood;
-    
     double distance;
     double meanDistanceNeighbourood;
     
@@ -61,6 +58,9 @@ struct nodeinfo
         
     int nodeDegree;
     double meanNodeDegreeNeighbourood;
+    
+    double nodeDegreeVariance;
+    double meanNodeDegreeVarianceNeighbourood;
     
     double meanSnrNeighbourood;
     double snrNeighbourood;
@@ -78,10 +78,6 @@ struct nodeinfo
     // L3 metric
     double l3Metric;
     double meanL3MetricNeighbourood;
-    
-    // next-hop info
-    double nextHopApproaching;
-    double meanNextHopApproachingNeighbourood;
     
     // App info
     double througputMeanSecWindow;
@@ -106,6 +102,12 @@ struct nodeinfo
     double pdrNumWindow;
     double meanPdrSecWindowNeighbourood;
     double meanPdrNumWindowNeighbourood;
+    
+    //NextHop related info    
+    double nextHopDistance;
+    double meanNextHopDistanceNeighbourood;
+    double nextHopApproaching;
+    double meanNextHopApproachingNeighbourood;
 };
 
 packet ApplicationPacketExt {

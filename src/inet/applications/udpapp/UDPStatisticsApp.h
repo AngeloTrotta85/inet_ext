@@ -58,7 +58,7 @@ public:
             os <<
                     //"Addr: " << n.nodeInf.localAddr <<
                     "[" << n.nodeInf.appAddr << "]" <<
-                    " Deg: " << n.nodeInf.nodeDegree << " [" << n.nodeInf.meanNodeDegreeNeighbourood << "]" <<
+                    " Deg: " << n.nodeInf.nodeDegree << "|" << n.nodeInf.nodeDegreeVariance << " [" << n.nodeInf.meanNodeDegreeNeighbourood << "|" << n.nodeInf.meanNodeDegreeVarianceNeighbourood << "]" <<
                     " SNR: " << n.nodeInf.snrNeighbourood << " [" << n.nodeInf.meanSnrNeighbourood << "]" <<
                     " Pow: " << n.nodeInf.powNeighbourood << " [" << n.nodeInf.meanPowNeighbourood << "]" <<
                     " Per: " << n.nodeInf.perNeighbourood << " [" << n.nodeInf.meanPerNeighbourood << "]" <<
@@ -99,6 +99,7 @@ private:
   // for variances
   std::list<double> myLastVelLength;
   std::list<double> myLastVelTheta;
+  std::list<double> myLastDegree;
 
   //parameters
   int pysicalDataHistorySize;

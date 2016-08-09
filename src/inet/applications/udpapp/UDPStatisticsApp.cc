@@ -57,6 +57,7 @@ void UDPStatisticsApp::initialize(int stage)
         WATCH_MAP(neighbourood);
         WATCH_LIST(myLastVelLength);
         WATCH_LIST(myLastVelTheta);
+        WATCH_LIST(myLastDegree);
     }
     else if (stage == INITSTAGE_LAST) {
         myAddr = L3AddressResolver().resolve(this->getParentModule()->getFullPath().c_str());
@@ -513,9 +514,11 @@ double UDPStatisticsApp::calcNextApproaching(void) {
 void UDPStatisticsApp::updateMyInfoVector(struct nodeinfo *info) {
     myLastVelLength.push_front(info->velLength);
     myLastVelTheta.push_front(info->velTheta);
+    myLastDegree.push_front(info->nodeDegree);
     if ((int)myLastVelLength.size() > maxListSizeVariances) {
         myLastVelLength.pop_back();
         myLastVelTheta.pop_back();
+        myLastDegree.pop_back();
     }
 }
 
@@ -529,6 +532,9 @@ void UDPStatisticsApp::setVariancesMeans(struct nodeinfo *info) {
     getVarianceMean(&myLastVelTheta, mean, variance);
     info->velThetaMean = mean;
     info->velThetaVariance = variance;
+
+    getVarianceMean(&myLastDegree, mean, variance);
+    info->nodeDegreeVariance = variance;
 }
 
 void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
@@ -538,9 +544,11 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
     double sumSnr, sumPow, sumPer, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp, sumL3Metric;
     double sumVelT, sumVelTMean, sumVelTVar, sumVelL, sumVelLMean, sumVelLVar, sumMacQAbs, sumMacQPerc;
     double sumThMSec, sumThVSec, sumThMNum, sumThVNum, sumDelMSec, sumDelVSec, sumDelMNum, sumDelVNum, sumPdrSec, sumPdrNum;
+    double sumDegreeVar;
     sumSnr = sumPow = sumPer = sumDeg = sumNextDist = sumDist = sumApp = sumNextApp = sumL3Metric = 0.0;
     sumVelT = sumVelTMean = sumVelTVar = sumVelL = sumVelLMean = sumVelLVar = sumMacQAbs = sumMacQPerc = 0.0;
     sumThMSec = sumThVSec = sumThMNum = sumThVNum = sumDelMSec = sumDelVSec = sumDelMNum = sumDelVNum = sumPdrSec = sumPdrNum = 0.0;
+    sumDegreeVar = 0.0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
         neigh_t *act = &(it->second);
@@ -572,6 +580,7 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         sumDelVNum += act->nodeInf.delayVarNumWindow;
         sumPdrSec += act->nodeInf.pdrSecWindow;
         sumPdrNum += act->nodeInf.pdrNumWindow;
+        sumDegreeVar += act->nodeInf.nodeDegreeVariance;
     }
 
     if (count == 0) {
@@ -603,6 +612,7 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanDelayVarSecWindowNeighbourood = 0.0;
         info.meanPdrNumWindowNeighbourood = 0.0;
         info.meanPdrSecWindowNeighbourood = 0.0;
+        info.meanNodeDegreeVarianceNeighbourood = 0.0;
     }
     else {
         info.meanNodeDegreeNeighbourood = sumDeg / count;
@@ -633,6 +643,7 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanDelayVarSecWindowNeighbourood = sumDelVSec / count;
         info.meanPdrNumWindowNeighbourood = sumPdrNum / count;
         info.meanPdrSecWindowNeighbourood = sumPdrSec / count;
+        info.meanNodeDegreeVarianceNeighbourood = sumDegreeVar / count;
     }
 }
 
@@ -645,10 +656,8 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
     info.perNeighbourood = calculateNeighMeanPer();
     info.pos = mob->getCurrentPosition();
     info.velocity = mob->getCurrentSpeed();
-    info.nextHopDistance = getDistanceNextHop();
     info.distance = calcMeanNeighDistance();
     info.approaching = calcApproachingNeigh();
-    info.nextHopApproaching = calcNextApproaching();
     info.velTheta = mob->getCurrentSpeed().angle(Coord(1.0, 0.0));
     info.velLength = mob->getCurrentSpeed().length();
 
@@ -673,7 +682,10 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
     info.pdrSecWindow = udpbb->getPDRSec();
     info.pdrNumWindow = udpbb->getPDRNum();
 
-    //calculateAllMeanNeighbourood(info);
+    //NextHop related info
+    info.nextHopDistance = getDistanceNextHop();
+    info.nextHopApproaching = calcNextApproaching();
+
 }
 
 void UDPStatisticsApp::fillNextInfo(struct nodeinfo &info) {
