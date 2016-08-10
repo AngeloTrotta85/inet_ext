@@ -14,6 +14,8 @@
 // 
 
 #include <limits>       // std::numeric_limits
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <applications/udpapp/UDPStatisticsApp.h>
 #include "inet/networklayer/common/L3AddressResolver.h"
@@ -50,6 +52,8 @@ void UDPStatisticsApp::initialize(int stage)
         maxListSizeVariances = par("maxListSizeVariances");
         statTime = par("statTime");
         startStatTime = par("startStatTime");
+        //fileStat = par("fileStat").stringValue();
+        snprintf(fileStat, sizeof(fileStat), "%s", par("fileStat").stringValue());
 
         mob = check_and_cast<IMobility *>(getParentModule()->getSubmodule("mobility"));
         dcfMac = check_and_cast<ieee80211::DcfUpperMacExt *>(getParentModule()->getSubmodule("wlan", 0)->getSubmodule("mac")->getSubmodule("upperMac"));
@@ -97,7 +101,7 @@ void UDPStatisticsApp::handleMessage(cMessage *msg)
 
 void UDPStatisticsApp::handleStatAutoMsg(void) {
 
-    if (firstInfoUpdate) {
+    /*if (firstInfoUpdate) {
         fillMyInfo(myLastInfo);
         setVariancesMeans(&myLastInfo);
         calculateAllMeanNeighbourood(myLastInfo);
@@ -110,7 +114,7 @@ void UDPStatisticsApp::handleStatAutoMsg(void) {
     //set last info
     fillMyInfo(myLastInfo);
     setVariancesMeans(&myLastInfo);
-    calculateAllMeanNeighbourood(myLastInfo);
+    calculateAllMeanNeighbourood(myLastInfo);*/
 }
 
 void UDPStatisticsApp::handle100msAutoMsg(void) {
@@ -261,7 +265,7 @@ cPacket *UDPStatisticsApp::createPacket()
     payload->addPar("sourceId") = getId();
     payload->addPar("msgId") = numSent;
 
-    struct nodeinfo myInfo, nextInfo;
+    struct nodeinfo myInfo, nextInfo, neighbourInfo;
 
     if (firstInfoUpdate) {
         fillMyInfo(myLastInfo);
@@ -281,6 +285,8 @@ cPacket *UDPStatisticsApp::createPacket()
     fillNextInfo(nextInfo);
     payload->setNextInfo(nextInfo);
 
+    fillNeighInfo(neighbourInfo);
+
     payload->setNeighboursArraySize(neighbourood.size());
     int ii = 0;
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
@@ -288,8 +294,9 @@ cPacket *UDPStatisticsApp::createPacket()
         payload->setNeighbours(ii++, actual->nodeInf);
     }
 
-    if (simTime() > startStatTime)
-        makeStat();
+    if (simTime() > (SIMTIME_ZERO + startStatTime))
+        makeStat(&myInfo, &nextInfo, &neighbourInfo);
+
     myLastInfo = myInfo;
 
     return payload;
@@ -745,6 +752,8 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
 void UDPStatisticsApp::fillNextInfo(struct nodeinfo &info) {
     IPv4Address nextAdd = getNextHopAddress();
 
+    info.appAddr = -1;
+
     if (nextAdd != IPv4Address::UNSPECIFIED_ADDRESS) {
         if (neighbourood.count(nextAdd) != 0) {
             //struct nodeinfo *act = &(neighbourood[nextAdd].nodeInf);
@@ -753,8 +762,52 @@ void UDPStatisticsApp::fillNextInfo(struct nodeinfo &info) {
     }
 }
 
-void UDPStatisticsApp::makeStat(void) {
+void UDPStatisticsApp::fillNeighInfo(struct nodeinfo &info) {
+    //TODO
+    info.appAddr = -1;
+}
 
+void UDPStatisticsApp::makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextInfo, struct nodeinfo *neighbourInfo) {
+    //char buffFileName[128];
+    //snprintf(buffFileName, sizeof(buffFileName), "%s", fileStat.c_str());
+    //FILE *file = fopen((const char *)buffFileName, "a");
+    FILE *file = fopen(fileStat, "a");
+    //FILE *file = fopen("results/TestBase/0.log", "a");
+    EV << "Opening file " << fileStat << " result: " << file << endl;
+    EV << strerror(errno) << endl;
+    if(file) {
+        std::stringstream ss;
+
+        printStreamInfo(ss, myInfo);
+
+        if (nextInfo->appAddr < 0){
+            ss << ";0;";
+        }
+        else {
+            ss << ";1;";
+        }
+        printStreamInfo(ss, nextInfo);
+
+        if (neighbourInfo->appAddr < 0){
+            ss << ";0;";
+        }
+        else {
+            ss << ";1;";
+        }
+        printStreamInfo(ss, neighbourInfo);
+        ss << endl;
+
+
+        fwrite(ss.str().c_str(), ss.str().size(), 1, file);
+        fclose(file);
+    }
+}
+
+void UDPStatisticsApp::printStreamInfo(std::ostream& os, struct nodeinfo *i) {
+    os <<
+            i->velocity.x << ";" << i->velocity.y << ";" <<
+            i->meanVelocityNeighbourood.x << ";" << i->meanVelocityNeighbourood.y <<
+            "";
 }
 
 

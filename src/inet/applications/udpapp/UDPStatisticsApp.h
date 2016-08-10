@@ -110,6 +110,7 @@ private:
   int maxListSizeVariances;
   double statTime;
   double startStatTime;
+  char fileStat[256];
 
   IMobility *mob;
   ieee80211::DcfUpperMacExt *dcfMac;
@@ -155,13 +156,16 @@ protected:
   virtual void updateMyInfoVector(struct nodeinfo *info);
   virtual void setVariancesMeans(struct nodeinfo *info);
 
-  virtual void makeStat(void);
+  virtual void makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextInfo, struct nodeinfo *neighbourInfo);
+
+  virtual void printStreamInfo(std::ostream& os, struct nodeinfo *i);
 
 private:
   void updateForce(void);
 
   void fillMyInfo(struct nodeinfo &info);
   void fillNextInfo(struct nodeinfo &info);
+  void fillNeighInfo(struct nodeinfo &info);
 
 public:
   UDPStatisticsApp() {};

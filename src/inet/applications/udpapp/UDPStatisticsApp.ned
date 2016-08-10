@@ -24,6 +24,7 @@ simple UDPStatisticsApp extends UDPBasicBurst
         int maxListSizeVariances = default(20);
         double statTime @unit(s) = default(2s);
         double startStatTime @unit(s) = default(30s);
+        string fileStat = default ("/tmp/statTest.log");
         
         @class(UDPStatisticsApp);
 }
