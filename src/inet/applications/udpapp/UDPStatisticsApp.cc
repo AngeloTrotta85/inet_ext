@@ -54,6 +54,7 @@ void UDPStatisticsApp::initialize(int stage)
         startStatTime = par("startStatTime");
         //fileStat = par("fileStat").stringValue();
         snprintf(fileStat, sizeof(fileStat), "%s", par("fileStat").stringValue());
+        remove(fileStat);
 
         mob = check_and_cast<IMobility *>(getParentModule()->getSubmodule("mobility"));
         dcfMac = check_and_cast<ieee80211::DcfUpperMacExt *>(getParentModule()->getSubmodule("wlan", 0)->getSubmodule("mac")->getSubmodule("upperMac"));
@@ -371,8 +372,11 @@ double UDPStatisticsApp::getL3Metric(void) {
 
         Coord destPos = gpsr->getNeighborPosition(udpbb->getDestAddr());
 
-        if (destPos != Coord::NIL) {
+        if(!destPos.isNil() && !destPos.isUnspecified()) {
+        //if (destPos != Coord::NIL) {
             ris = destPos.distance(mob->getCurrentPosition());
+
+            if (isnan(ris)) ris = 0.0;  //check
 
             EV << "GPSR Routing metric: " << ris << endl;
         }
@@ -763,18 +767,25 @@ void UDPStatisticsApp::fillNextInfo(struct nodeinfo &info) {
 }
 
 void UDPStatisticsApp::fillNeighInfo(struct nodeinfo &info) {
-    //TODO
     info.appAddr = -1;
+
+    if (neighbourood.size() > 0) {
+        int index = intrand(neighbourood.size());
+        int actIdx = 0;
+        for (auto it = neighbourood.begin(); it != neighbourood.end(); it++){
+            if (actIdx == index) {
+                info = it->second.nodeInf;
+                return;
+            }
+            actIdx++;
+        }
+    }
 }
 
 void UDPStatisticsApp::makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextInfo, struct nodeinfo *neighbourInfo) {
-    //char buffFileName[128];
-    //snprintf(buffFileName, sizeof(buffFileName), "%s", fileStat.c_str());
-    //FILE *file = fopen((const char *)buffFileName, "a");
     FILE *file = fopen(fileStat, "a");
-    //FILE *file = fopen("results/TestBase/0.log", "a");
-    EV << "Opening file " << fileStat << " result: " << file << endl;
-    EV << strerror(errno) << endl;
+    //EV << "Opening file " << fileStat << " result: " << file << endl;
+    //EV << strerror(errno) << endl;
     if(file) {
         std::stringstream ss;
 
@@ -806,7 +817,38 @@ void UDPStatisticsApp::makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextIn
 void UDPStatisticsApp::printStreamInfo(std::ostream& os, struct nodeinfo *i) {
     os <<
             i->velocity.x << ";" << i->velocity.y << ";" <<
-            i->meanVelocityNeighbourood.x << ";" << i->meanVelocityNeighbourood.y <<
+            i->meanVelocityNeighbourood.x << ";" << i->meanVelocityNeighbourood.y << ";" <<
+            i->velTheta << ";" << i->meanVelThetaNeighbourood << ";" <<
+            i->velThetaMean << ";" << i->meanVelThetaMeanNeighbourood << ";" <<
+            i->velThetaVariance << ";" << i->meanVelThetaVarianceNeighbourood << ";" <<
+            i->velLength << ";" << i->meanVelLengthNeighbourood << ";" <<
+            i->velLengthMean << ";" << i->meanVelLengthMeanNeighbourood << ";" <<
+            i->velLengthVariance << ";" << i->meanVelLengthVarianceNeighbourood << ";" <<
+            i->distance << ";" << i->meanDistanceNeighbourood << ";" <<
+            i->approaching << ";" << i->meanApproachingNeighbourood << ";" <<
+            i->nodeDegree << ";" << i->meanNodeDegreeNeighbourood << ";" <<
+            i->nodeDegreeVariance << ";" << i->meanNodeDegreeVarianceNeighbourood << ";" <<
+            i->snrNeighbourood << ";" << i->meanSnrNeighbourood << ";" <<
+            i->powNeighbourood << ";" << i->meanPowNeighbourood << ";" <<
+            i->perNeighbourood << ";" << i->meanPerNeighbourood << ";" <<
+            i->queueMacSizeAbs << ";" << i->meanQueueMacSizeAbsNeighbourood << ";" <<
+            i->queueMacSizePerc << ";" << i->meanQueueMacSizePercNeighbourood << ";" <<
+            i->l3Metric << ";" << i->meanL3MetricNeighbourood << ";" <<
+            i->througputMeanSecWindow << ";" << i->meanThrougputMeanSecWindowNeighbourood << ";" <<
+            i->througputVarSecWindow << ";" << i->meanThrougputVarSecWindowNeighbourood << ";" <<
+            i->througputMeanNumWindow << ";" << i->meanThrougputMeanNumWindowNeighbourood << ";" <<
+            i->througputVarNumWindow << ";" << i->meanThrougputVarNumWindowNeighbourood << ";" <<
+            i->througputMeanTrendSecWindow << ";" << i->meanThrougputMeanTrendSecWindowNeighbourood << ";" <<
+            i->delayMeanSecWindow << ";" << i->meanDelayMeanSecWindowNeighbourood << ";" <<
+            i->delayVarSecWindow << ";" << i->meanDelayVarSecWindowNeighbourood << ";" <<
+            i->delayMeanNumWindow << ";" << i->meanDelayMeanNumWindowNeighbourood << ";" <<
+            i->delayVarNumWindow << ";" << i->meanDelayVarNumWindowNeighbourood << ";" <<
+            i->delayMeanTrendSecWindow << ";" << i->meanDelayMeanTrendSecWindowNeighbourood << ";" <<
+            i->pdrSecWindow << ";" << i->meanPdrSecWindowNeighbourood << ";" <<
+            i->pdrNumWindow << ";" << i->meanPdrNumWindowNeighbourood << ";" <<
+            i->pdrTrendSecWindow << ";" << i->meanPdrTrendSecWindowNeighbourood << ";" <<
+            i->nextHopDistance << ";" << i->meanNextHopDistanceNeighbourood << ";" <<
+            i->nextHopApproaching << ";" << i->meanNextHopApproachingNeighbourood <<
             "";
 }
 
