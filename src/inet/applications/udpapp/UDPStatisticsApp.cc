@@ -784,8 +784,6 @@ void UDPStatisticsApp::fillNeighInfo(struct nodeinfo &info) {
 
 void UDPStatisticsApp::makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextInfo, struct nodeinfo *neighbourInfo) {
     FILE *file = fopen(fileStat, "a");
-    //EV << "Opening file " << fileStat << " result: " << file << endl;
-    //EV << strerror(errno) << endl;
     if(file) {
         std::stringstream ss;
 
@@ -811,6 +809,9 @@ void UDPStatisticsApp::makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextIn
 
         fwrite(ss.str().c_str(), ss.str().size(), 1, file);
         fclose(file);
+    }
+    else {
+        EV << "Opening file " << fileStat << " failed with error: " << strerror(errno) << endl;
     }
 }
 

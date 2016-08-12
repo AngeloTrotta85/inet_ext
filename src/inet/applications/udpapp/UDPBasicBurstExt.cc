@@ -94,7 +94,9 @@ L3Address UDPBasicBurstExt::chooseDestAddr()
 
 void UDPBasicBurstExt::handleMessageWhenUp(cMessage *msg)
 {
+    EV << "Received packet: " << msg->getName() << endl;
     if (msg->getKind() == UDP_I_DATA) {
+        EV << "Received packet from network: " << msg->getName() << endl;
         // process incoming packet
         if (strncmp(msg->getName(), "UDPBasicAppExtData", strlen("UDPBasicAppExtData")) == 0) {
             handleIncomingPacket(check_and_cast<ApplicationPacketBurst *>(msg));
