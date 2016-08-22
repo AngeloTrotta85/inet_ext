@@ -376,7 +376,7 @@ double UDPStatisticsApp::getL3Metric(void) {
         //if (destPos != Coord::NIL) {
             ris = destPos.distance(mob->getCurrentPosition());
 
-            if (isnan(ris)) ris = 0.0;  //check
+            if (std::isnan(ris)) ris = 0.0;  //check
 
             EV << "GPSR Routing metric: " << ris << endl;
         }
