@@ -482,8 +482,13 @@ void UDPStatisticsApp::calculateNeighMeanPhy(double &pow, double &snr, double &p
 
     if (neighbourood.size() > 0){
         snr = sumSnr / ((double) neighbourood.size());
+        if (isinf(snr) || isnan(snr)) snr = 0.0;
+
         pow = sumPow / ((double) neighbourood.size());
+        if (isinf(pow) || isnan(pow)) pow = 0.0;
+
         per = sumPer / ((double) neighbourood.size());
+        if (isinf(per) || isnan(per)) per = 0.0;
     }
 }
 
