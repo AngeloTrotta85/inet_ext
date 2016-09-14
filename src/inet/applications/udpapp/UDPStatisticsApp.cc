@@ -406,6 +406,7 @@ double UDPStatisticsApp::getDistanceNextHop(void) {
     if (nextAdd != IPv4Address::UNSPECIFIED_ADDRESS) {
         if (neighbourood.count(nextAdd) != 0) {
             ris = neighbourood[nextAdd].nodeInf.pos.distance(mob->getCurrentPosition());
+            if (isinf(ris) || isnan(ris)) ris = std::numeric_limits<double>::max();
         }
     }
 
