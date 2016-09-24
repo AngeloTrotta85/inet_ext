@@ -414,15 +414,16 @@ double UDPStatisticsApp::getDistanceNextHop(void) {
 }
 
 double UDPStatisticsApp::getWeightedMean(std::list<double> *l) {
-    int i = 1;
+    double i = 1;
 
     double w = 0;
     double sum = 0;
     double ris = 0;
 
     for (auto it = l->begin(); it != l->end(); it++) {
-        sum += (*it) * (1.0/i);
-        w += (1.0/i);
+        double actW = (1.0/i);
+        sum += (*it) * actW;
+        w += actW;
 
         i++;
     }
@@ -789,35 +790,37 @@ void UDPStatisticsApp::fillNeighInfo(struct nodeinfo &info) {
 }
 
 void UDPStatisticsApp::makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextInfo, struct nodeinfo *neighbourInfo) {
-    FILE *file = fopen(fileStat, "a");
-    if(file) {
-        std::stringstream ss;
+    if(myInfo->nodeDegree > 0) {
+        FILE *file = fopen(fileStat, "a");
+        if(file) {
+            std::stringstream ss;
 
-        printStreamInfo(ss, myInfo);
+            printStreamInfo(ss, myInfo);
 
-        if (nextInfo->appAddr < 0){
-            ss << ";0;";
+            if (nextInfo->appAddr < 0){
+                ss << ";0;";
+            }
+            else {
+                ss << ";1;";
+            }
+            printStreamInfo(ss, nextInfo);
+
+            if (neighbourInfo->appAddr < 0){
+                ss << ";0;";
+            }
+            else {
+                ss << ";1;";
+            }
+            printStreamInfo(ss, neighbourInfo);
+            ss << endl;
+
+
+            fwrite(ss.str().c_str(), ss.str().size(), 1, file);
+            fclose(file);
         }
         else {
-            ss << ";1;";
+            EV << "Opening file " << fileStat << " failed with error: " << strerror(errno) << endl;
         }
-        printStreamInfo(ss, nextInfo);
-
-        if (neighbourInfo->appAddr < 0){
-            ss << ";0;";
-        }
-        else {
-            ss << ";1;";
-        }
-        printStreamInfo(ss, neighbourInfo);
-        ss << endl;
-
-
-        fwrite(ss.str().c_str(), ss.str().size(), 1, file);
-        fclose(file);
-    }
-    else {
-        EV << "Opening file " << fileStat << " failed with error: " << strerror(errno) << endl;
     }
 }
 
