@@ -406,7 +406,7 @@ double UDPStatisticsApp::getDistanceNextHop(void) {
     if (nextAdd != IPv4Address::UNSPECIFIED_ADDRESS) {
         if (neighbourood.count(nextAdd) != 0) {
             ris = neighbourood[nextAdd].nodeInf.pos.distance(mob->getCurrentPosition());
-            if (isinf(ris) || isnan(ris)) ris = std::numeric_limits<double>::max();
+            if (std::isinf(ris) || std::isnan(ris)) ris = std::numeric_limits<double>::max();
         }
     }
 
@@ -484,13 +484,13 @@ void UDPStatisticsApp::calculateNeighMeanPhy(double &pow, double &snr, double &p
 
     if (neighbourood.size() > 0){
         snr = sumSnr / ((double) neighbourood.size());
-        if (isinf(snr) || isnan(snr)) snr = 0.0;
+        if (std::isinf(snr) || std::isnan(snr)) snr = 0.0;
 
         pow = sumPow / ((double) neighbourood.size());
-        if (isinf(pow) || isnan(pow)) pow = 0.0;
+        if (std::isinf(pow) || std::isnan(pow)) pow = 0.0;
 
         per = sumPer / ((double) neighbourood.size());
-        if (isinf(per) || isnan(per)) per = 0.0;
+        if (std::isinf(per) || std::isnan(per)) per = 0.0;
     }
 }
 
