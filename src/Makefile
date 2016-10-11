@@ -2,7 +2,7 @@
 # OMNeT++/OMNEST Makefile for libinet_ext
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep --make-so -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/linklayer -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/linklayer/ieee80211/mac -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/physicallayer/ieee80211/packetlevel -L/home/angelo/Programs/omnetpp-5.0/samples/inet/out/$$\(CONFIGNAME\)/src -lINET -KINET_PROJ=/home/angelo/Programs/omnetpp-5.0/samples/inet
+#  opp_makemake -f --deep --make-so -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/linklayer/ieee80211/mac -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/linklayer -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/physicallayer/ieee80211/packetlevel -L/home/angelo/Programs/omnetpp-5.0/samples/inet/out/$$\(CONFIGNAME\)/src -lINET -KINET_PROJ=/home/angelo/Programs/omnetpp-5.0/samples/inet
 #
 
 # Name of target to be created (-o option)
@@ -10,9 +10,9 @@ TARGET = libinet_ext$(SHARED_LIB_SUFFIX)
 
 # C++ include paths (with -I)
 INCLUDE_PATH = \
-    -I$(INET_PROJ)/src/inet/linklayer \
     -I$(INET_PROJ)/src \
     -I$(INET_PROJ)/src/inet/linklayer/ieee80211/mac \
+    -I$(INET_PROJ)/src/inet/linklayer \
     -I$(INET_PROJ)/src/inet/physicallayer/ieee80211/packetlevel \
     -I. \
     -Iinet \
