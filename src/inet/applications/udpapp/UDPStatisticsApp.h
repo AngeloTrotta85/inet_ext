@@ -112,6 +112,8 @@ private:
   double startStatTime;
   char fileStat[256];
 
+  bool onlyMyInfoStat;
+
   IMobility *mob;
   ieee80211::DcfUpperMacExt *dcfMac;
   UDPBasicBurstExt *udpbb;

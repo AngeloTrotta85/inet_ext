@@ -52,6 +52,7 @@ void UDPStatisticsApp::initialize(int stage)
         maxListSizeVariances = par("maxListSizeVariances");
         statTime = par("statTime");
         startStatTime = par("startStatTime");
+        onlyMyInfoStat = par("onlyMyInfoStat").boolValue();
         //fileStat = par("fileStat").stringValue();
         snprintf(fileStat, sizeof(fileStat), "%s", par("fileStat").stringValue());
         remove(fileStat);
@@ -353,7 +354,7 @@ IPv4Address UDPStatisticsApp::getNextHopAddress(void) {
 }
 
 double UDPStatisticsApp::getL3Metric(void) {
-    double ris = 0.0;
+    double ris = NaN;
     IRoutingTable *routingTable = dynamic_cast<IRoutingTable *>(this->getParentModule()->getSubmodule("routingTable"));
 
     if (dynamic_cast<AODVRouting *>(this->getParentModule()->getSubmodule("aodv"))) {
@@ -400,13 +401,15 @@ double UDPStatisticsApp::getL3Metric(void) {
 }
 
 double UDPStatisticsApp::getDistanceNextHop(void) {
-    double ris = std::numeric_limits<double>::max();
+    //double ris = std::numeric_limits<double>::max();
+    double ris = -1;
     IPv4Address nextAdd = getNextHopAddress();
 
     if (nextAdd != IPv4Address::UNSPECIFIED_ADDRESS) {
         if (neighbourood.count(nextAdd) != 0) {
             ris = neighbourood[nextAdd].nodeInf.pos.distance(mob->getCurrentPosition());
-            if (std::isinf(ris) || std::isnan(ris)) ris = std::numeric_limits<double>::max();
+            //if (std::isinf(ris) || std::isnan(ris)) ris = std::numeric_limits<double>::max();
+            if (std::isinf(ris) || std::isnan(ris)) ris = -1;
         }
     }
 
@@ -514,7 +517,7 @@ double UDPStatisticsApp::calculateNeighMeanPer(void) {
 
 double UDPStatisticsApp::calcMeanNeighDistance(void) {
     double count = neighbourood.size();
-    double ris = std::numeric_limits<double>::max();
+    double ris = -1;
     double sumD = 0.0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
@@ -540,7 +543,7 @@ double UDPStatisticsApp::calcApproachingVal(Coord posA, Coord velA, Coord posB, 
 
 double UDPStatisticsApp::calcApproachingNeigh(void) {
     double count = neighbourood.size();
-    double ris = 0.0;
+    double ris = NaN;
     double sumA = 0.0;
 
     for (auto it = neighbourood.begin(); it != neighbourood.end(); it++) {
@@ -557,7 +560,7 @@ double UDPStatisticsApp::calcApproachingNeigh(void) {
 }
 
 double UDPStatisticsApp::calcNextApproaching(void) {
-    double ris = 0.0;
+    double ris = NaN;
     IPv4Address nextAdd = getNextHopAddress();
 
     if (nextAdd != IPv4Address::UNSPECIFIED_ADDRESS) {
@@ -601,6 +604,13 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
     double count = neighbourood.size();
 
     Coord sumVel = Coord::ZERO;
+
+    std::pair<double, double> pairNextDist (0.0, 0.0);
+    std::pair<double, double> pairNextApproach (0.0, 0.0);
+    std::pair<double, double> pairDist (0.0, 0.0);
+    std::pair<double, double> pairApproach (0.0, 0.0);
+    std::pair<double, double> pairL3Metric (0.0, 0.0);
+
     double sumSnr, sumPow, sumPer, sumDeg, sumNextDist, sumDist, sumApp, sumNextApp, sumL3Metric;
     double sumVelT, sumVelTMean, sumVelTVar, sumVelL, sumVelLMean, sumVelLVar, sumMacQAbs, sumMacQPerc;
     double sumThMSec, sumThVSec, sumThMNum, sumThVNum, sumDelMSec, sumDelVSec, sumDelMNum, sumDelVNum, sumPdrSec, sumPdrNum;
@@ -617,10 +627,20 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         sumPer += act->nodeInf.perNeighbourood;
         sumDeg += act->nodeInf.nodeDegree;
         sumVel += act->nodeInf.velocity;
+
         sumNextDist += act->nodeInf.nextHopDistance;
-        sumDist += act->nodeInf.distance;
-        sumApp += act->nodeInf.approaching;
+        if (act->nodeInf.nextHopDistance >= 0.0) {pairNextDist.first += act->nodeInf.nextHopDistance; pairNextDist.second += 1;}
         sumNextApp += act->nodeInf.nextHopApproaching;
+        if (!(std::isnan(act->nodeInf.nextHopApproaching))) {pairNextApproach.first += act->nodeInf.nextHopApproaching; pairNextApproach.second += 1;}
+
+        sumDist += act->nodeInf.distance;
+        if (act->nodeInf.distance >= 0.0) {pairDist.first += act->nodeInf.distance; pairDist.second += 1;}
+        sumApp += act->nodeInf.approaching;
+        if (!(std::isnan(act->nodeInf.approaching))) {pairApproach.first += act->nodeInf.approaching; pairApproach.second += 1;}
+
+        sumL3Metric += act->nodeInf.l3Metric;
+        if (!(std::isnan(act->nodeInf.l3Metric))) {pairL3Metric.first += act->nodeInf.l3Metric; pairL3Metric.second += 1;}
+
         sumVelT += act->nodeInf.velTheta;
         sumVelTMean += act->nodeInf.velThetaMean;
         sumVelTVar += act->nodeInf.velThetaVariance;
@@ -629,7 +649,6 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         sumVelLVar += act->nodeInf.velLengthVariance;
         sumMacQAbs += act->nodeInf.queueMacSizeAbs;
         sumMacQPerc += act->nodeInf.queueMacSizePerc;
-        sumL3Metric += act->nodeInf.l3Metric;
         sumThMSec += act->nodeInf.througputMeanSecWindow;
         sumThVSec += act->nodeInf.througputVarSecWindow;
         sumThMNum += act->nodeInf.througputMeanNumWindow;
@@ -652,10 +671,10 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanPerNeighbourood = 0.0;
         info.meanSnrNeighbourood = 0.0;
         info.meanVelocityNeighbourood = Coord::ZERO;
-        info.meanNextHopDistanceNeighbourood = 0.0;
-        info.meanDistanceNeighbourood = std::numeric_limits<double>::max();
-        info.meanApproachingNeighbourood = 0.0;
-        info.meanNextHopApproachingNeighbourood = 0.0;
+        //info.meanNextHopDistanceNeighbourood = 0.0;
+        //info.meanNextHopApproachingNeighbourood = 0.0;
+        //info.meanDistanceNeighbourood = std::numeric_limits<double>::max();
+        //info.meanApproachingNeighbourood = 0.0;
         info.meanVelThetaNeighbourood = 0.0;
         info.meanVelThetaMeanNeighbourood = 0.0;
         info.meanVelThetaVarianceNeighbourood = 0.0;
@@ -664,7 +683,7 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanVelLengthVarianceNeighbourood = 0.0;
         info.meanQueueMacSizeAbsNeighbourood = 0.0;
         info.meanQueueMacSizePercNeighbourood = 0.0;
-        info.meanL3MetricNeighbourood = 0.0;
+        //info.meanL3MetricNeighbourood = 0.0;
         info.meanThrougputMeanNumWindowNeighbourood = 0.0;
         info.meanThrougputVarNumWindowNeighbourood = 0.0;
         info.meanThrougputMeanSecWindowNeighbourood = 0.0;
@@ -686,10 +705,10 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanPerNeighbourood = sumPer / count;
         info.meanSnrNeighbourood = sumSnr / count;
         info.meanVelocityNeighbourood = sumVel / count;
-        info.meanNextHopDistanceNeighbourood = sumNextDist / count;
-        info.meanDistanceNeighbourood = sumDist / count;
-        info.meanApproachingNeighbourood = sumApp / count;
-        info.meanNextHopApproachingNeighbourood = sumNextApp / count;
+        //info.meanNextHopDistanceNeighbourood = sumNextDist / count;
+        //info.meanNextHopApproachingNeighbourood = sumNextApp / count;
+        //info.meanDistanceNeighbourood = sumDist / count;
+        //info.meanApproachingNeighbourood = sumApp / count;
         info.meanVelThetaNeighbourood = sumVelT / count;
         info.meanVelThetaMeanNeighbourood = sumVelTMean/ count;
         info.meanVelThetaVarianceNeighbourood = sumVelTVar / count;
@@ -698,7 +717,7 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanVelLengthVarianceNeighbourood = sumVelLVar / count;
         info.meanQueueMacSizeAbsNeighbourood = sumMacQAbs / count;
         info.meanQueueMacSizePercNeighbourood = sumMacQPerc / count;
-        info.meanL3MetricNeighbourood = sumL3Metric / count;
+        //info.meanL3MetricNeighbourood = sumL3Metric / count;
         info.meanThrougputMeanNumWindowNeighbourood = sumThMNum / count;
         info.meanThrougputVarNumWindowNeighbourood = sumThVNum / count;
         info.meanThrougputMeanSecWindowNeighbourood = sumThMSec / count;
@@ -714,6 +733,20 @@ void UDPStatisticsApp::calculateAllMeanNeighbourood(struct nodeinfo &info) {
         info.meanDelayMeanTrendSecWindowNeighbourood = sumDelSTrend / count;
         info.meanPdrTrendSecWindowNeighbourood = sumPdrSTrend / count;
     }
+
+    // pair section
+    if (pairNextDist.second > 0) info.meanNextHopDistanceNeighbourood = pairNextDist.first / pairNextDist.second;
+    else info.meanNextHopDistanceNeighbourood = -1;
+    if (pairNextApproach.second > 0) info.meanNextHopApproachingNeighbourood = pairNextApproach.first / pairNextApproach.second;
+    else info.meanNextHopApproachingNeighbourood = 0.0;
+
+    if (pairDist.second > 0) info.meanDistanceNeighbourood = pairDist.first / pairDist.second;
+    else info.meanDistanceNeighbourood = -1;
+    if (pairApproach.second > 0) info.meanApproachingNeighbourood = pairApproach.first / pairApproach.second;
+    else info.meanApproachingNeighbourood = 0.0;
+
+    if (pairL3Metric.second > 0) info.meanL3MetricNeighbourood = pairL3Metric.first / pairL3Metric.second;
+    else info.meanL3MetricNeighbourood = 0.0;
 }
 
 void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
@@ -727,8 +760,10 @@ void UDPStatisticsApp::fillMyInfo(struct nodeinfo &info) {
     info.velocity = mob->getCurrentSpeed();
     info.distance = calcMeanNeighDistance();
     info.approaching = calcApproachingNeigh();
-    info.velTheta = mob->getCurrentSpeed().angle(Coord(1.0, 0.0));
     info.velLength = mob->getCurrentSpeed().length();
+    info.velTheta = mob->getCurrentSpeed().angle(Coord(1.0, 0.0));
+    if (std::isinf(info.velTheta) || std::isnan(info.velTheta)) info.velTheta = 0;
+
 
     //MAC
     info.queueMacSizeAbs = dcfMac->getQueueAbs();
@@ -795,23 +830,29 @@ void UDPStatisticsApp::makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextIn
         if(file) {
             std::stringstream ss;
 
+            ss << simTime() << ";";
+
             printStreamInfo(ss, myInfo);
 
-            if (nextInfo->appAddr < 0){
-                ss << ";0;";
-            }
-            else {
-                ss << ";1;";
-            }
-            printStreamInfo(ss, nextInfo);
+            if (!onlyMyInfoStat) {
 
-            if (neighbourInfo->appAddr < 0){
-                ss << ";0;";
+                if (nextInfo->appAddr < 0){
+                    ss << ";0;";
+                }
+                else {
+                    ss << ";1;";
+                }
+                printStreamInfo(ss, nextInfo);
+
+                if (neighbourInfo->appAddr < 0){
+                    ss << ";0;";
+                }
+                else {
+                    ss << ";1;";
+                }
+                printStreamInfo(ss, neighbourInfo);
+
             }
-            else {
-                ss << ";1;";
-            }
-            printStreamInfo(ss, neighbourInfo);
             ss << endl;
 
 
@@ -835,7 +876,7 @@ void UDPStatisticsApp::printStreamInfo(std::ostream& os, struct nodeinfo *i) {
             i->velLengthMean << ";" << i->meanVelLengthMeanNeighbourood << ";" <<
             i->velLengthVariance << ";" << i->meanVelLengthVarianceNeighbourood << ";" <<
             i->distance << ";" << i->meanDistanceNeighbourood << ";" <<
-            i->approaching << ";" << i->meanApproachingNeighbourood << ";" <<
+            (std::isnan(i->approaching) ? 0.0 : i->approaching) << ";" << i->meanApproachingNeighbourood << ";" <<
             i->nodeDegree << ";" << i->meanNodeDegreeNeighbourood << ";" <<
             i->nodeDegreeVariance << ";" << i->meanNodeDegreeVarianceNeighbourood << ";" <<
             i->snrNeighbourood << ";" << i->meanSnrNeighbourood << ";" <<
@@ -858,7 +899,7 @@ void UDPStatisticsApp::printStreamInfo(std::ostream& os, struct nodeinfo *i) {
             i->pdrNumWindow << ";" << i->meanPdrNumWindowNeighbourood << ";" <<
             i->pdrTrendSecWindow << ";" << i->meanPdrTrendSecWindowNeighbourood << ";" <<
             i->nextHopDistance << ";" << i->meanNextHopDistanceNeighbourood << ";" <<
-            i->nextHopApproaching << ";" << i->meanNextHopApproachingNeighbourood <<
+            (std::isnan(i->nextHopApproaching) ? 0.0 : i->nextHopApproaching) << ";" << i->meanNextHopApproachingNeighbourood <<
             "";
 }
 
