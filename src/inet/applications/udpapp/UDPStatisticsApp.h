@@ -111,6 +111,7 @@ private:
   double statTime;
   double startStatTime;
   char fileStat[256];
+  char fileStatHeader[256];
 
   bool onlyMyInfoStat;
 
@@ -161,6 +162,7 @@ protected:
   virtual void makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextInfo, struct nodeinfo *neighbourInfo);
 
   virtual void printStreamInfo(std::ostream& os, struct nodeinfo *i);
+  virtual void printFileStatHeader(void);
 
 private:
   void updateForce(void);

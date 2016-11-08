@@ -25,6 +25,7 @@ simple UDPStatisticsApp extends UDPBasicBurst
         double statTime @unit(s) = default(2s);
         double startStatTime @unit(s) = default(30s);
         string fileStat = default ("/tmp/statTest.log");
+        string fileStatHeader = default ("/tmp/statTestHeader.log");
         
         bool onlyMyInfoStat = default(true);
         

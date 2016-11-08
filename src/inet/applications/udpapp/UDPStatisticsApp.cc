@@ -57,6 +57,9 @@ void UDPStatisticsApp::initialize(int stage)
         snprintf(fileStat, sizeof(fileStat), "%s", par("fileStat").stringValue());
         remove(fileStat);
 
+        snprintf(fileStatHeader, sizeof(fileStatHeader), "%s", par("fileStatHeader").stringValue());
+        remove(fileStatHeader);
+
         mob = check_and_cast<IMobility *>(getParentModule()->getSubmodule("mobility"));
         dcfMac = check_and_cast<ieee80211::DcfUpperMacExt *>(getParentModule()->getSubmodule("wlan", 0)->getSubmodule("mac")->getSubmodule("upperMac"));
         udpbb = check_and_cast<UDPBasicBurstExt *>(getParentModule()->getSubmodule("udpApp", 1));
@@ -77,6 +80,8 @@ void UDPStatisticsApp::initialize(int stage)
         myAddr = L3AddressResolver().resolve(this->getParentModule()->getFullPath().c_str());
         myAppAddr = this->getParentModule()->getIndex();
         EV << "My address is: " << myAddr << std::endl;
+
+        printFileStatHeader();
 
         this->getParentModule()->getDisplayString().setTagArg("t", 0, myAddr.str().c_str());
     }
@@ -831,6 +836,10 @@ void UDPStatisticsApp::makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextIn
             std::stringstream ss;
 
             ss << simTime() << ";";
+            ss << mob->getConstraintAreaMax().x - mob->getConstraintAreaMin().x << ";";
+            ss << mob->getConstraintAreaMax().y - mob->getConstraintAreaMin().y << ";";
+            ss << (mob->getConstraintAreaMax().x - mob->getConstraintAreaMin().x)*(mob->getConstraintAreaMax().y - mob->getConstraintAreaMin().y) << ";";
+            ss << this->getParentModule()->getVectorSize() << ";";
 
             printStreamInfo(ss, myInfo);
 
@@ -901,6 +910,92 @@ void UDPStatisticsApp::printStreamInfo(std::ostream& os, struct nodeinfo *i) {
             i->nextHopDistance << ";" << i->meanNextHopDistanceNeighbourood << ";" <<
             (std::isnan(i->nextHopApproaching) ? 0.0 : i->nextHopApproaching) << ";" << i->meanNextHopApproachingNeighbourood <<
             "";
+}
+
+void UDPStatisticsApp::printFileStatHeader(void) {
+    FILE *file = fopen(fileStatHeader, "a");
+    if(file) {
+        std::stringstream ss;
+        int i0,i1;
+        i0=0;
+        i1=1;
+
+        ss << i0++ << "\t" << i1++ << "\t" << "SimTime" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "AreaX" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "AreaY" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "AreaSquaredMeters" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "NumberOfNodes" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "velocity.x" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "velocity.y" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanVelocityNeighbourood.x" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanVelocityNeighbourood.y" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "velTheta" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanVelThetaNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "velThetaMean" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanVelThetaMeanNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "velThetaVariance" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanVelThetaVarianceNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "velLength" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanVelLengthNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "velLengthMean" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanVelLengthMeanNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "velLengthVariance" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanVelLengthVarianceNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "distance" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanDistanceNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "approaching" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanApproachingNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "nodeDegree" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanNodeDegreeNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "nodeDegreeVariance" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanNodeDegreeVarianceNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "snrNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanSnrNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "powNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanPowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "perNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanPerNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "queueMacSizeAbs" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanQueueMacSizeAbsNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "queueMacSizePerc" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanQueueMacSizePercNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "l3Metric" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanL3MetricNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "througputMeanSecWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanThrougputMeanSecWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "througputVarSecWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanThrougputVarSecWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "througputMeanNumWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanThrougputMeanNumWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "througputVarNumWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanThrougputVarNumWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "througputMeanTrendSecWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanThrougputMeanTrendSecWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "delayMeanSecWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanDelayMeanSecWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "delayVarSecWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanDelayVarSecWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "delayMeanNumWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanDelayMeanNumWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "delayVarNumWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanDelayVarNumWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "delayMeanTrendSecWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanDelayMeanTrendSecWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "pdrSecWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanPdrSecWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "pdrNumWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanPdrNumWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "pdrTrendSecWindow" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanPdrTrendSecWindowNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "nextHopDistance" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanNextHopDistanceNeighbourood" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "nextHopApproaching" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "meanNextHopApproachingNeighbourood" << endl;
+
+
+        fwrite(ss.str().c_str(), ss.str().size(), 1, file);
+        fclose(file);
+    }
 }
 
 
