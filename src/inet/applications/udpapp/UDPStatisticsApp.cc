@@ -64,6 +64,8 @@ void UDPStatisticsApp::initialize(int stage)
         dcfMac = check_and_cast<ieee80211::DcfUpperMacExt *>(getParentModule()->getSubmodule("wlan", 0)->getSubmodule("mac")->getSubmodule("upperMac"));
         udpbb = check_and_cast<UDPBasicBurstExt *>(getParentModule()->getSubmodule("udpApp", 1));
 
+        radioTransmitter = check_and_cast<physicallayer::Ieee80211TransmitterBase *>(getParentModule()->getSubmodule("wlan", 0)->getSubmodule("radio")->getSubmodule("transmitter"));
+
 
         autoMsg = new cMessage("updateForce");
         scheduleAt(simTime() + dblrand(), autoMsg);
@@ -840,6 +842,11 @@ void UDPStatisticsApp::makeStat(struct nodeinfo *myInfo, struct nodeinfo *nextIn
             ss << mob->getConstraintAreaMax().y - mob->getConstraintAreaMin().y << ";";
             ss << (mob->getConstraintAreaMax().x - mob->getConstraintAreaMin().x)*(mob->getConstraintAreaMax().y - mob->getConstraintAreaMin().y) << ";";
             ss << this->getParentModule()->getVectorSize() << ";";
+            ss << radioTransmitter->getPower().get() << ";";
+            ss << udpbb->getMessageLength() << ";";
+            ss << udpbb->getMessageLengthSigma() << ";";
+            ss << udpbb->getSendInterval() << ";";
+            ss << udpbb->getBurstVolume() << ";";
 
             printStreamInfo(ss, myInfo);
 
@@ -913,18 +920,23 @@ void UDPStatisticsApp::printStreamInfo(std::ostream& os, struct nodeinfo *i) {
 }
 
 void UDPStatisticsApp::printFileStatHeader(void) {
-    FILE *file = fopen(fileStatHeader, "a");
+    FILE *file = fopen(fileStatHeader, "w");
     if(file) {
         std::stringstream ss;
         int i0,i1;
         i0=0;
         i1=1;
 
-        ss << i0++ << "\t" << i1++ << "\t" << "SimTime" << endl;
-        ss << i0++ << "\t" << i1++ << "\t" << "AreaX" << endl;
-        ss << i0++ << "\t" << i1++ << "\t" << "AreaY" << endl;
-        ss << i0++ << "\t" << i1++ << "\t" << "AreaSquaredMeters" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "SimTime(s)" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "AreaX(m)" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "AreaY(m)" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "AreaSquaredMeters(m2)" << endl;
         ss << i0++ << "\t" << i1++ << "\t" << "NumberOfNodes" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "TransmittingPower(W)" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "GeneratedMessageLength(B)" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "GeneratedMessageLengthSigma(B)" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "GeneratedPacketsSendInterval(s)" << endl;
+        ss << i0++ << "\t" << i1++ << "\t" << "GeneratedBurtsVolume(B/s)" << endl;
         ss << i0++ << "\t" << i1++ << "\t" << "velocity.x" << endl;
         ss << i0++ << "\t" << i1++ << "\t" << "velocity.y" << endl;
         ss << i0++ << "\t" << i1++ << "\t" << "meanVelocityNeighbourood.x" << endl;

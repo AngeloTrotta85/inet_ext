@@ -98,6 +98,11 @@ public:
     virtual double getPDRSec(void);
     virtual double getPDRNum(void);
 
+    virtual double getMessageLength(void);
+    virtual double getMessageLengthSigma(void);
+    virtual double getSendInterval(void);
+    virtual double getBurstVolume(void);
+
   private:
   //  int destAddrIdx;
     L3Address myAddr;

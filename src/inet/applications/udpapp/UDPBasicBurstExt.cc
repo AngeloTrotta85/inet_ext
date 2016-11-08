@@ -61,6 +61,45 @@ L3Address UDPBasicBurstExt::chooseDestAddr()
 }
 */
 
+double UDPBasicBurstExt::getMessageLength(void){
+    double sumVal = 0.0;
+    double countVal = 0.0;
+
+    for (int i=0; i < 50; i++) {
+        sumVal += messageLengthPar->longValue();
+        countVal++;
+    }
+    return (sumVal/countVal);
+};
+
+double UDPBasicBurstExt::getMessageLengthSigma(void){
+    double sumVal = 0.0;
+    double countVal = 0.0;
+    double mean = getMessageLength();
+
+    for (int i=0; i < 50; i++) {
+        sumVal += pow(messageLengthPar->longValue() - mean, 2);
+        countVal++;
+    }
+
+    return sqrt(sumVal/(countVal-1.0));
+};
+
+double UDPBasicBurstExt::getSendInterval(void){
+    double sumVal = 0.0;
+    double countVal = 0.0;
+
+    for (int i=0; i < 50; i++) {
+        sumVal += sendIntervalPar->doubleValue();
+        countVal++;
+    }
+    return (sumVal/countVal);
+};
+
+double UDPBasicBurstExt::getBurstVolume(void){
+    return (getMessageLength()/getSendInterval());
+}
+
 L3Address UDPBasicBurstExt::getDestAddr(void) {
     return actualDestAddr;
 }

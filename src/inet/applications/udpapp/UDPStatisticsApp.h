@@ -27,6 +27,7 @@
 #include "inet/applications/udpapp/UDPBasicBurst.h"
 #include "inet/applications/udpapp/UDPBasicBurstExt.h"
 #include "inet/transportlayer/contract/udp/UDPSocket.h"
+#include "inet/physicallayer/ieee80211/packetlevel/Ieee80211TransmitterBase.h"
 
 #include "inet/transportlayer/contract/udp/UDPDataIndicationExt_m.h"
 #include "inet/applications/base/ApplicationPacketExt_m.h"
@@ -118,6 +119,7 @@ private:
   IMobility *mob;
   ieee80211::DcfUpperMacExt *dcfMac;
   UDPBasicBurstExt *udpbb;
+  physicallayer::Ieee80211TransmitterBase *radioTransmitter;
 
 protected:
   virtual int numInitStages() const override { return NUM_INIT_STAGES; }

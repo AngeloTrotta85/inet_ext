@@ -231,6 +231,7 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/applications/base/ApplicationBase.h \
 	$(INET_PROJ)/src/inet/applications/udpapp/UDPBasicBurst.h \
 	$(INET_PROJ)/src/inet/common/Compat.h \
+	$(INET_PROJ)/src/inet/common/DelayedInitializer.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
 	$(INET_PROJ)/src/inet/common/INETMath.h \
 	$(INET_PROJ)/src/inet/common/InitStages.h \
@@ -246,6 +247,9 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/common/lifecycle/NodeOperations.h \
 	$(INET_PROJ)/src/inet/common/lifecycle/NodeStatus.h \
 	$(INET_PROJ)/src/inet/common/lifecycle/OperationalBase.h \
+	$(INET_PROJ)/src/inet/common/mapping/Interpolation.h \
+	$(INET_PROJ)/src/inet/common/mapping/MappingBase.h \
+	$(INET_PROJ)/src/inet/common/mapping/MappingUtils.h \
 	$(INET_PROJ)/src/inet/features.h \
 	$(INET_PROJ)/src/inet/linklayer/common/MACAddress.h \
 	$(INET_PROJ)/src/inet/linklayer/ieee80211/mac/AccessCategory.h \
@@ -271,10 +275,23 @@ $O/inet/applications/udpapp/UDPStatisticsApp.o: inet/applications/udpapp/UDPStat
 	$(INET_PROJ)/src/inet/networklayer/contract/ipv6/IPv6Address.h \
 	$(INET_PROJ)/src/inet/networklayer/ipv4/IPv4Datagram.h \
 	$(INET_PROJ)/src/inet/networklayer/ipv4/IPv4Datagram_m.h \
+	$(INET_PROJ)/src/inet/physicallayer/base/packetlevel/FlatTransmitterBase.h \
+	$(INET_PROJ)/src/inet/physicallayer/base/packetlevel/NarrowbandTransmitterBase.h \
 	$(INET_PROJ)/src/inet/physicallayer/base/packetlevel/PhysicalLayerDefs.h \
+	$(INET_PROJ)/src/inet/physicallayer/base/packetlevel/TransmitterBase.h \
+	$(INET_PROJ)/src/inet/physicallayer/contract/bitlevel/ISignalAnalogModel.h \
 	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/IModulation.h \
 	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/IPrintableObject.h \
+	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/IRadioSignal.h \
+	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/ITransmission.h \
+	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/ITransmitter.h \
+	$(INET_PROJ)/src/inet/physicallayer/contract/packetlevel/RadioControlInfo_m.h \
 	$(INET_PROJ)/src/inet/physicallayer/ieee80211/mode/IIeee80211Mode.h \
+	$(INET_PROJ)/src/inet/physicallayer/ieee80211/mode/Ieee80211Band.h \
+	$(INET_PROJ)/src/inet/physicallayer/ieee80211/mode/Ieee80211Channel.h \
+	$(INET_PROJ)/src/inet/physicallayer/ieee80211/mode/Ieee80211ModeSet.h \
+	$(INET_PROJ)/src/inet/physicallayer/ieee80211/packetlevel/Ieee80211ControlInfo_m.h \
+	$(INET_PROJ)/src/inet/physicallayer/ieee80211/packetlevel/Ieee80211TransmitterBase.h \
 	$(INET_PROJ)/src/inet/routing/aodv/AODVControlPackets_m.h \
 	$(INET_PROJ)/src/inet/routing/aodv/AODVRouteData.h \
 	$(INET_PROJ)/src/inet/routing/aodv/AODVRouting.h \
