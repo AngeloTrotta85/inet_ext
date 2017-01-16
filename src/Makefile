@@ -2,7 +2,7 @@
 # OMNeT++/OMNEST Makefile for libinet_ext
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep --make-so -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/linklayer/ieee80211/mac -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/linklayer -I/home/angelo/Programs/omnetpp-5.0/samples/inet/src/inet/physicallayer/ieee80211/packetlevel -L/home/angelo/Programs/omnetpp-5.0/samples/inet/out/$$\(CONFIGNAME\)/src -lINET -KINET_PROJ=/home/angelo/Programs/omnetpp-5.0/samples/inet
+#  opp_makemake -f --deep --make-so -I/media/angelo/BigLinux/Programs/OMNeT++/omnetpp-5.0/samples/inet/src -I/media/angelo/BigLinux/Programs/OMNeT++/omnetpp-5.0/samples/inet/src/inet/linklayer/ieee80211/mac -I/media/angelo/BigLinux/Programs/OMNeT++/omnetpp-5.0/samples/inet/src/inet/linklayer -I/media/angelo/BigLinux/Programs/OMNeT++/omnetpp-5.0/samples/inet/src/inet/physicallayer/ieee80211/packetlevel -L/media/angelo/BigLinux/Programs/OMNeT++/omnetpp-5.0/samples/inet/out/$$\(CONFIGNAME\)/src -lINET -KINET_PROJ=/media/angelo/BigLinux/Programs/OMNeT++/omnetpp-5.0/samples/inet
 #
 
 # Name of target to be created (-o option)
@@ -50,8 +50,8 @@ O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
 OBJS = \
-    $O/inet/applications/udpapp/UDPBasicBurstExt.o \
     $O/inet/applications/udpapp/UDPStatisticsApp.o \
+    $O/inet/applications/udpapp/UDPBasicBurstExt.o \
     $O/inet/linklayer/ieee80211/mac/DcfUpperMacExt.o \
     $O/inet/linklayer/ieee80211/mgmt/Ieee80211MgmtAdhocExt.o \
     $O/inet/networklayer/ipv4/IPv4Ext.o \
@@ -71,7 +71,7 @@ MSGFILES = \
 SMFILES =
 
 # Other makefile variables (-K)
-INET_PROJ=/home/angelo/Programs/omnetpp-5.0/samples/inet
+INET_PROJ=/media/angelo/BigLinux/Programs/OMNeT++/omnetpp-5.0/samples/inet
 
 #------------------------------------------------------------------------------
 
